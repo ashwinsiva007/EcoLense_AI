@@ -76,6 +76,9 @@ This document serves as the mandatory, chronological, append-oriented engineerin
 2. `git --version`: Returned `git version 2.55.0.windows.3`.
 3. `git init`: Initialized empty Git repository in `B:/antigravity/ecolense_ai/.git/`.
 4. `uv.exe python install 3.11` / `uv venv`: Installed standalone CPython 3.11.17; confirmed that system-level WDAC / AppLocker policy restricts direct execution of unsigned binaries in user space without administrator elevation.
+5. `git remote add origin https://github.com/ashwinsiva007/EcoLense_AI.git`: Configured remote tracking branch.
+6. `git pull --rebase origin main`: Harmonized initial remote commit and synchronized branch history.
+7. `git push -u origin main`: Successfully pushed complete Stage 1 codebase to GitHub repository.
 
 ### 4. Code & Architecture Integrity Review
 * **Zero Fabrication Guardrail:** Confirmed that `app.py`, `DataLoader`, and `components.py` display transparent welcome and readiness states rather than fabricating synthetic data as real statistics.
