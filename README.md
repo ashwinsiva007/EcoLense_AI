@@ -167,7 +167,30 @@ pytest -v
 
 ---
 
-## 8. Current Implementation Status
+---
+
+## 8. Cloud Deployment Guide
+
+This application is built with **Streamlit**, which runs a continuous, stateful WebSocket server. Standard serverless runtimes (like Vercel serverless functions) do not support persistent WebSocket connections.
+
+### Option A: Streamlit Community Cloud (Recommended — Free & 1-Click)
+1. Go to [share.streamlit.io](https://share.streamlit.io/) and log in with your GitHub account.
+2. Click **New app**.
+3. Select your repository: `ashwinsiva007/EcoLense_AI`.
+4. Set Main file path to: `app.py`.
+5. Click **Deploy**.
+
+### Option B: Render.com (Free Web Service)
+1. Sign up on [Render.com](https://render.com/) and click **New + -> Web Service**.
+2. Connect your GitHub repository `ashwinsiva007/EcoLense_AI`.
+3. Set **Runtime** to `Python 3`.
+4. Set **Build Command**: `pip install -r requirements.txt`.
+5. Set **Start Command**: `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`.
+6. Click **Create Web Service**.
+
+---
+
+## 9. Current Implementation Status
 
 | Feature / Module | Status | Notes |
 | :--- | :--- | :--- |
