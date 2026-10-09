@@ -1,0 +1,3 @@
+# Sample data directory
+# Place synthetic demonstration or isolated test datasets here.
+# Any datasets placed here MUST be explicitly tagged as synthetic in application code.

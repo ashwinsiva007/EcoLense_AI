@@ -1,0 +1,3 @@
+# Logs directory
+# Application and audit logs are written here at runtime.
+# Log files (*.log) are excluded from version control by default.

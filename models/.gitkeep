@@ -1,0 +1,3 @@
+# Models directory
+# Trained models, scalers, and pipeline artifacts will be stored here in future stages.
+# Binary artifacts are excluded from version control by default.
