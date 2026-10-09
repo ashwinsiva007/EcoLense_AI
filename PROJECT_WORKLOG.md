@@ -79,6 +79,7 @@ This document serves as the mandatory, chronological, append-oriented engineerin
 5. `git remote add origin https://github.com/ashwinsiva007/EcoLense_AI.git`: Configured remote tracking branch.
 6. `git pull --rebase origin main`: Harmonized initial remote commit and synchronized branch history.
 7. `git push -u origin main`: Successfully pushed complete Stage 1 codebase to GitHub repository.
+8. `vercel.json` & `app.py` update: Configured top-level WSGI handler (`app = handler`) with `@vercel/python` builder routing, `.streamlit/config.toml`, and `Procfile` for seamless cloud deployment.
 
 ### 4. Code & Architecture Integrity Review
 * **Zero Fabrication Guardrail:** Confirmed that `app.py`, `DataLoader`, and `components.py` display transparent welcome and readiness states rather than fabricating synthetic data as real statistics.
