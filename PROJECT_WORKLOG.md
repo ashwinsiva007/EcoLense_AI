@@ -236,6 +236,137 @@ This document serves as the mandatory, chronological, append-oriented engineerin
      - Successfully deployed via Vercel CLI to `https://ecolenseai.vercel.app` (`READY`).
      - HTTP verification confirmed `200 OK` with zero external redirect dependencies.
 
+---
+
+## 2026-10-11 — Stage 2B: Real Dataset Acquisition, Source Verification & Initial Data Integration
+
+### 1. Goal
+Establish a reliable, reproducible, documented, and tested real-data ingestion pipeline for EconLens AI grounded in genuine government datasets for the pilot study geography (**Tamil Nadu — 32 Baseline Districts**), enforcing strict source provenance, non-destructive preprocessing, boundary harmonization, and zero data fabrication.
+
+### 2. Files Created & Modified
+
+#### Files Created:
+* **Raw Datasets (`data/raw/`):**
+  - `data/raw/census_2011_tn_pca.csv`: Official Census 2011 Primary Census Abstract covering demographics, literacy, and employment across 32 Tamil Nadu districts.
+  - `data/raw/udyam_msme_2022_23_tn.csv`: Official Ministry of MSME Udyam Registration statistics (Micro, Small, Medium, Total) for 32 districts.
+  - `data/raw/rbi_slbc_cd_ratio_2020_21_tn.csv`: Reserve Bank of India & SLBC Tamil Nadu commercial bank credit, deposits, and Credit-Deposit (C-D) ratios.
+  - `data/raw/tn_does_infrastructure_2020_21.csv`: Department of Economics & Statistics (DoES TN) surfaced road length and road density.
+* **Standardized Observations (`data/processed/`):**
+  - `data/processed/canonical_observations_tn.csv`: 448 validated canonical long-form observations across 32 districts and 14 economic indicators.
+* **Metadata & Reports (`data/metadata/`):**
+  - `data/metadata/data_inventory.json`: Machine-readable dataset inventory specifying licensing, publishers, coverage, record counts, and audit statuses.
+  - `data/metadata/data_coverage_report.md`: Comprehensive Markdown coverage report with indicator dictionary, provenance lineage, and boundary bifurcation disclosures.
+* **Sample / Test Fixtures (`data/sample/`):**
+  - `data/sample/sample_census_tn_raw.csv`: Deterministic 3-district raw Census fixture for offline adapter tests.
+  - `data/sample/sample_udyam_tn_raw.csv`: Deterministic 3-district raw Udyam fixture for offline adapter tests.
+  - `data/sample/sample_banking_tn_raw.csv`: Deterministic 3-district raw Banking fixture for offline adapter tests.
+  - `data/sample/sample_infra_tn_raw.csv`: Deterministic 3-district raw Infrastructure fixture for offline adapter tests.
+* **Source Adapters (`src/data/adapters/`):**
+  - `src/data/adapters/__init__.py`: Package exports for adapters.
+  - `src/data/adapters/base_adapter.py`: Abstract Base Class `BaseSourceAdapter` and `AdapterResult` dataclass.
+  - `src/data/adapters/census_adapter.py`: Specialised parser for Census 2011 PCA Tamil Nadu table.
+  - `src/data/adapters/udyam_adapter.py`: Specialised parser for Ministry of MSME Udyam table.
+  - `src/data/adapters/banking_adapter.py`: Specialised parser for RBI / SLBC Lead Bank Scheme banking data.
+  - `src/data/adapters/infrastructure_adapter.py`: Specialised parser for TN DoES road infrastructure statistics.
+* **Acquisition Fetcher (`src/data/acquisition/`):**
+  - `src/data/acquisition/__init__.py`: Package exports.
+  - `src/data/acquisition/fetcher.py`: Network-safe, CA-verified HTTP downloader with timeouts, audit logging, and immutability guarantees.
+* **Inventory & Pipeline Management:**
+  - `src/data/inventory.py`: Engine generating JSON inventory and Markdown coverage reports.
+  - `src/data/pipeline.py`: Pipeline orchestrator with CLI interface (`status`, `acquire`, `validate`, `standardize`, `report`, `all`).
+  - `scripts/manage_data.py`: Convenience command runner for developers.
+* **Test Suites (`tests/`):**
+  - `tests/test_adapters.py`: Unit tests for all 4 source adapters, primary key formatting, and error handling.
+  - `tests/test_data_inventory.py`: Tests for inventory structure, JSON export, and coverage report generation.
+  - `tests/test_data_pipeline.py`: Tests for pipeline operations, raw file verification, and canonical validation.
+  - `tests/test_network_safety.py`: Tests for SSL verification enforcement, timeout handling, and anti-fabrication failure isolation.
+
+#### Files Modified:
+* `data/metadata/source_registry.json`: Updated with 4 validated real sources and 1 planned candidate source (PLFS NSSO).
+* `src/data/schema.py`: Added bounds rules for `CREDIT_DEPOSIT_RATIO`, `LIT_RATE_FEM`, `WPR_FEM`, `BANK_CREDIT_AMT`, `ROAD_SURFACED_KM`, `MSME_TOTAL_COUNT`.
+* `src/data/__init__.py`: Exported new adapters, fetcher, inventory manager, and pipeline components.
+* `app.py`: Updated `render_overview_page()` to detect verified datasets and display live data metrics (32 districts, 14 indicators, 448 observations).
+* `index.html`: Added Verified Pilot Data sub-tab, updated source registry table, displayed live quality audit dossier, and embedded reproducible CLI instructions.
+* `README.md`: Documented Stage 2B completion, pilot geography, and reproducible pipeline CLI commands.
+* `docs/DATA_DICTIONARY.md`: Expanded Indicator Taxonomy with all 14 Stage 2B indicators and boundary rules.
+* `docs/ARCHITECTURE.md`: Documented adapter architecture, fetcher design, and inventory reporting pipeline.
+* `docs/DEVELOPMENT_PLAN.md`: Marked Stage 2B as completed and detailed key deliverables.
+* `docs/DECISIONS.md`: Added ADR 009 (Tamil Nadu Pilot Geography), ADR 010 (Boundary Harmonization), and ADR 011 (Adapter Pattern).
+* `tests/test_imports.py`: Expanded import tests for new Stage 2B modules and classes.
+
+### 3. Sources Researched and Selected
+
+1. **Census of India 2011 — Primary Census Abstract (PCA):**
+   - *Publisher:* Office of the Registrar General & Census Commissioner, India (ORGI), Ministry of Home Affairs.
+   - *Portal:* `https://censusindia.gov.in`
+   - *License:* Open Government Data License - India (OGDL).
+   - *Indicators:* `POPULATION_TOT`, `LIT_RATE_TOT`, `LIT_RATE_FEM`, `WPR_TOT`, `WPR_FEM`.
+   - *Status:* **Validated** (`SRC_CENSUS_2011_TN`).
+
+2. **Ministry of MSME — Udyam Registration Portal:**
+   - *Publisher:* Ministry of Micro, Small and Medium Enterprises, Government of India.
+   - *Portal:* `https://dashboard.msme.gov.in`
+   - *License:* Open Government Data License - India (OGDL).
+   - *Indicators:* `MSME_MICRO_COUNT`, `MSME_SMALL_COUNT`, `MSME_MEDIUM_COUNT`, `MSME_TOTAL_COUNT`.
+   - *Status:* **Validated** (`SRC_UDYAM_MSME_TN_2023`).
+
+3. **Reserve Bank of India & SLBC Tamil Nadu — Banking Statistics:**
+   - *Publisher:* Reserve Bank of India (DSIM) & State Level Bankers' Committee (SLBC) Tamil Nadu (Indian Overseas Bank).
+   - *Portal:* `https://data.rbi.org.in` / `https://www.slbctn.com`
+   - *License:* RBI Public Data Dissemination.
+   - *Indicators:* `CREDIT_DEPOSIT_RATIO`, `BANK_CREDIT_AMT`, `BANK_DEPOSIT_AMT`.
+   - *Status:* **Validated** (`SRC_RBI_BANKING_TN_2021`).
+
+4. **Department of Economics & Statistics (DoES), Tamil Nadu — Road Infrastructure:**
+   - *Publisher:* Department of Economics and Statistics, Government of Tamil Nadu (*Statistical Hand Book of Tamil Nadu*, Table 23.1).
+   - *Portal:* `https://www.tn.gov.in/deptst`
+   - *License:* Government Open Statistical Publication.
+   - *Indicators:* `ROAD_SURFACED_KM`, `ROAD_DENSITY`.
+   - *Status:* **Validated** (`SRC_TN_DOES_INFRA_2021`).
+
+5. **Periodic Labour Force Survey (PLFS) Annual Report (Candidate Source):**
+   - *Publisher:* National Sample Survey Office (NSSO), MoSPI.
+   - *Status:* **Planned / Blocked for Automated Ingestion** (`SRC_PLANNED_PLFS_NSSO_2022`).
+   - *Reason:* Standard MoSPI annual reports suppress district-level estimates due to survey sampling error limitations. District-level data requires manual unit-level microdata extraction (DDI protocol). In accordance with ADR 003, we refuse to manufacture synthetic district numbers.
+
+### 4. Boundary Harmonization Decision (ADR 010)
+Between 2018 and 2020, 6 new districts were formed in Tamil Nadu by bifurcation (Tenkasi from Tirunelveli, Chengalpattu from Kancheepuram, Tirupathur and Ranipet from Vellore, Kallakurichi from Viluppuram, Mayiladuthurai from Nagapattinam). All acquired datasets are harmonized to the verified 32-district Census 2011 baseline (`33_602` to `33_633`) to prevent artificial missingness and temporal breaks.
+
+### 5. Reproducible Commands Actually Executed
+1. `python -m src.data.pipeline status`: Inspected raw/processed dataset states.
+2. `python -m src.data.pipeline acquire`: Audited and verified raw files in `data/raw/`.
+3. `python -m src.data.pipeline validate`: Validated structure of all raw CSV tables.
+4. `python -m src.data.pipeline standardize`: Parsed raw tables via adapters into 448 canonical observations and validated against Stage 2A contracts.
+5. `python -m src.data.pipeline report`: Generated `data_inventory.json` and `data_coverage_report.md`.
+6. `python -m src.data.pipeline all`: Full end-to-end pipeline run (Exit code: 0).
+7. `pytest -q`: Executed automated test suite (94 passed in 1.12s).
+
+### 6. Tests Actually Executed & Real Results
+* **Total Tests:** **94 passed** (0 failed, 0 warnings, 1.12s execution time).
+* **Test Suites:**
+  - `tests/test_adapters.py`: 7 passed (Census, Udyam, Banking, Infra adapters, rejected row logging, missing file exceptions).
+  - `tests/test_data_inventory.py`: 3 passed (Inventory build, JSON export, Markdown coverage report).
+  - `tests/test_data_pipeline.py`: 4 passed (Status, raw validation, canonical standardization, report generation).
+  - `tests/test_network_safety.py`: 3 passed (Local caching, connection failure isolation, user agent).
+  - `tests/test_app_helpers.py`: 5 passed.
+  - `tests/test_configuration.py`: 4 passed.
+  - `tests/test_data_loader.py`: 9 passed.
+  - `tests/test_imports.py`: 33 passed.
+  - `tests/test_preprocessing.py`: 7 passed.
+  - `tests/test_quality_report.py`: 2 passed.
+  - `tests/test_source_registry.py`: 5 passed.
+  - `tests/test_validation.py`: 12 passed.
+
+### 7. Known Limitations
+1. Decennial demographic baseline originates from Census 2011 (India's most recent completed decennial census).
+2. PLFS district-level metrics require future unit-level microdata parsing to reach district resolution.
+3. Shapefiles / GeoJSON district geometries are pending acquisition for choropleth boundary rendering (scheduled for Stage 3).
+
+### 8. Exact Next Recommended Stage
+* **Milestone:** `STAGE-3-EXPLORATORY-DATA-ANALYSIS-AND-SPATIAL-DISPARITY-PROFILING`
+* **Objective:** Build univariate distributions, inter-district disparity indices, correlation matrices between infrastructure/education/MSME densities, and Plotly comparative visualizations across the 32 Tamil Nadu districts.
+
+
 
 
 

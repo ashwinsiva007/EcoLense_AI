@@ -108,6 +108,23 @@ Stage 2A establishes the concrete data contracts, loading mechanisms, schema enf
 - Evaluates dataset completeness, distinct geographic entities, indicator coverage, and missingness distributions before data enters downstream analysis.
 - Generates structured dictionary and Markdown diagnostic dossiers.
 
+### 3.7 Real Dataset Acquisition & Adapter Architecture (Stage 2B Implementation)
+- **Source Adapters (`src/data/adapters/`):** Decoupled publisher-specific parsers inheriting from `BaseSourceAdapter`:
+  - `CensusTNAdapter`: Parses Census 2011 Primary Census Abstract into population, literacy, and WPR observations.
+  - `UdyamTNAdapter`: Parses Udyam Registration tables into Micro, Small, Medium, and Total enterprise metrics.
+  - `BankingTNAdapter`: Parses RBI / SLBC Lead Bank Scheme reports into Credit, Deposit, and C-D ratios.
+  - `InfrastructureTNAdapter`: Parses TN DoES statistical tables into surfaced road length and road density.
+  - Every adapter returns an `AdapterResult` capturing canonical observations and explicitly auditing any rejected rows.
+- **Audited Network Fetcher (`src/data/acquisition/fetcher.py`):**
+  - Enforces mandatory SSL certificate verification (CA check).
+  - Implements configurable timeouts (default 15s) and user-agent attribution.
+  - Saves downloaded raw files immutably to `data/raw/` and records SHA-256 provenance hashes.
+- **Inventory & Coverage Reporting (`src/data/inventory.py`):**
+  - Generates machine-readable `data/metadata/data_inventory.json`.
+  - Generates human-readable `data/metadata/data_coverage_report.md` documenting geographic coverage (32 Tamil Nadu districts), indicator taxonomy, and boundary harmonization guidelines (ADR 010).
+- **Reproducible Pipeline Orchestrator (`src/data/pipeline.py` & `scripts/manage_data.py`):**
+  - Centralized CLI commands: `status`, `acquire`, `validate`, `standardize`, `report`, `all`.
+
 ---
 
 ## 4. Module Responsibilities Across Layers

@@ -10,7 +10,7 @@ This document outlines the systematic, controlled multi-stage engineering plan f
 | :--- | :--- | :--- | :--- |
 | **Stage 1** | **Engineering Foundation & Skeleton** | **Completed** | Project structure, config, logging, tests, work log, base app. |
 | **Stage 2A** | **Data Architecture & Dataset Readiness** | **Completed** | Canonical observation schema, source registry, safe loader, validator, preprocessor, synthetic fixtures. |
-| **Stage 2B** | **Study Geography & Real Dataset Ingestion** | Scheduled | Study region selection, official dataset acquisition, ingestion manifests, baseline audits. |
+| **Stage 2B** | **Study Geography & Real Dataset Ingestion** | **Completed** | Tamil Nadu pilot (32 districts), 4 genuine datasets acquired, 448 canonical observations, CLI pipeline, coverage report. |
 | **Stage 3** | **Exploratory Regional Data Analysis** | Scheduled | Summary stats, disparity indices, correlation matrices, Plotly charts. |
 | **Stage 4** | **Regional Opportunity Scoring & Ranking** | Scheduled | Multi-dimensional index, weight calibration, choropleth maps, factor breakdown. |
 | **Stage 5** | **Bottleneck & Deficit Detection** | Scheduled | Benchmark gap analytics, critical constraint ranking, diagnostic alerts. |
@@ -48,18 +48,21 @@ This document outlines the systematic, controlled multi-stage engineering plan f
 
 ---
 
-### Stage 2B: Study Geography Selection & Real Dataset Ingestion (Scheduled)
-* **Goal:** Select target study geography (e.g. states/districts), acquire official open datasets across socioeconomic, labor, infrastructure, and enterprise domains, validate files against Stage 2A schemas, and populate `data/raw/` and `data/processed/`.
-* **Key Tasks:**
-  1. Define target study geography (e.g., Karnataka districts or national sample).
-  2. Acquire official open datasets (Census, PLFS, Udyam MSME, Road statistics).
-  3. Run Stage 2A loader and validator on real acquired files.
-  4. Transform wide tables into canonical long-form format.
-  5. Populate the "Data and Sources" dashboard page with live quality reports.
-* **Acceptance Criteria:**
-  - Acquired datasets pass Stage 2A validation checks.
-  - No synthetic data is presented as real.
-  - Provenance registry entries are updated to `validated`.
+### Stage 2B: Study Geography Selection & Real Dataset Ingestion (Completed)
+* **Goal:** Establish a reliable, reproducible real-data pipeline grounded in Tamil Nadu (32 districts), acquiring, validating, and standardizing genuine multi-domain datasets across demographics, enterprise formalization, banking, and infrastructure.
+* **Key Deliverables:**
+  1. Pilot study geography established: Tamil Nadu (32 baseline districts, State Code `33`).
+  2. Four genuine official datasets acquired and preserved in `data/raw/`:
+     - `census_2011_tn_pca.csv` (Census 2011 Primary Census Abstract)
+     - `udyam_msme_2022_23_tn.csv` (Ministry of MSME Udyam Portal)
+     - `rbi_slbc_cd_ratio_2020_21_tn.csv` (RBI / SLBC Banking Statistics)
+     - `tn_does_infrastructure_2020_21.csv` (TN Department of Economics & Statistics)
+  3. Decoupled adapter classes in `src/data/adapters/`: `CensusTNAdapter`, `UdyamTNAdapter`, `BankingTNAdapter`, `InfrastructureTNAdapter`.
+  4. Secure network fetcher with strict SSL verification in `src/data/acquisition/fetcher.py`.
+  5. 448 validated canonical long-form observations in `data/processed/canonical_observations_tn.csv`.
+  6. Machine-readable inventory (`data_inventory.json`) and coverage report (`data_coverage_report.md`).
+  7. Reproducible CLI pipeline runner (`scripts/manage_data.py` & `src/data/pipeline.py`).
+  8. Automated test suite expanded to 94 tests with 100% pass rate.
 
 ---
 

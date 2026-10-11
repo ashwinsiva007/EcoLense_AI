@@ -80,9 +80,11 @@ models/*.pkl
 models/*.pt
 models/*.onnx
 
-# Raw and processed datasets (preserve sample/test data and .gitkeep)
+# Raw and processed datasets (preserve sample/test data and pilot CSVs)
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/*.csv
 data/processed/*
 !data/processed/.gitkeep
+!data/processed/*.csv
 .vercel

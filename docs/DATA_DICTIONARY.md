@@ -73,12 +73,21 @@ Indicator bounds checks are applied specifically, not arbitrarily:
 
 | Domain | Indicator Code | Default Unit | Acceptable Range | Interpretation Caveat |
 | :--- | :--- | :--- | :--- | :--- |
+| **Demographics** | `POPULATION_TOT` | `count` | `[1.0, None)` | Total resident population from Census 2011 PCA. |
 | **Demographics** | `LIT_RATE_TOT` | `percentage` | `[0.0, 100.0]` | Effective literacy rate (population aged 7+). |
-| **Demographics** | `POPULATION_TOT` | `count` | `[1.0, None)` | Total resident population. Must be positive. |
-| **Labor** | `WPR_TOT` | `percentage` | `[0.0, 100.0]` | Worker Population Ratio. |
-| **Labor** | `FLFPR_TOT` | `percentage` | `[0.0, 100.0]` | Female Labor Force Participation Rate. |
+| **Demographics** | `LIT_RATE_FEM` | `percentage` | `[0.0, 100.0]` | Effective female literacy rate. |
+| **Labor** | `WPR_TOT` | `percentage` | `[0.0, 100.0]` | Total Worker Population Ratio (Main + Marginal). |
+| **Labor** | `WPR_FEM` | `percentage` | `[0.0, 100.0]` | Female Worker Population Ratio. |
+| **Labor** | `FLFPR_TOT` | `percentage` | `[0.0, 100.0]` | Female Labor Force Participation Rate (PLFS benchmark). |
+| **Enterprise** | `MSME_MICRO_COUNT` | `count` | `[0.0, None)` | Registered Micro Enterprises on Udyam portal. |
+| **Enterprise** | `MSME_SMALL_COUNT` | `count` | `[0.0, None)` | Registered Small Enterprises on Udyam portal. |
+| **Enterprise** | `MSME_MEDIUM_COUNT` | `count` | `[0.0, None)` | Registered Medium Enterprises on Udyam portal. |
+| **Enterprise** | `MSME_TOTAL_COUNT` | `count` | `[0.0, None)` | Total registered MSME units on Udyam portal. |
+| **Financial** | `CREDIT_DEPOSIT_RATIO` | `percentage` | `[0.0, None)` | Commercial bank credit-deposit ratio (can exceed 100%). |
+| **Financial** | `BANK_CREDIT_AMT` | `crore_inr` | `[0.0, None)` | Total gross commercial bank credit outstanding. |
+| **Financial** | `BANK_DEPOSIT_AMT` | `crore_inr` | `[0.0, None)` | Total aggregate commercial bank deposits. |
+| **Infrastructure** | `ROAD_SURFACED_KM` | `km` | `[0.0, None)` | Total surfaced roadway length (Highways & Local Bodies). |
 | **Infrastructure** | `ROAD_DENSITY` | `km_per_sq_km` | `[0.0, None)` | Surfaced road length per unit geographical area. |
-| **Financial** | `CREDIT_DEPOSIT_RATIO` | `ratio` | `[0.0, None)` | Commercial bank credit to deposit ratio. Can exceed 100%. |
 
 ---
 

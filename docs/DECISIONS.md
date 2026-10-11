@@ -130,3 +130,51 @@ This document captures key architectural and technical decisions made during the
 * **Consequences:**  
   - Preserves empirical integrity and prevents fabricated statistics.
   - Forces downstream analytics to handle missing data explicitly and transparently.
+
+---
+
+## ADR 009: Selection of Tamil Nadu as Pilot Study Geography
+
+* **Date:** 2026-10-11
+* **Status:** Accepted (Stage 2B)
+* **Context:**  
+  EconLens AI requires a concrete, data-rich pilot study geography to ground multi-domain analysis. The chosen geography must have high data availability across demographics, enterprise formalization, banking penetration, and infrastructure, backed by credible state and national statistical agencies.
+* **Decision:**  
+  Adopt **Tamil Nadu** (State Code `33`) as the pilot geography for initial real data integration and testing.
+* **Consequences:**  
+  - Enables rich cross-sectional benchmarking across diverse industrial, coastal, agricultural, and metro districts (e.g. Chennai, Coimbatore, Salem, Tiruppur, Ramanathapuram).
+  - Constrains initial regional scope to a manageable cohort of 32 districts.
+  - Establishes a template for onboarding other states in subsequent releases.
+
+---
+
+## ADR 010: Boundary Harmonization for Census 2011 Baseline vs. Post-2018 District Bifurcations
+
+* **Date:** 2026-10-11
+* **Status:** Accepted (Stage 2B)
+* **Context:**  
+  In 2011, Tamil Nadu had 32 districts. Between 2018 and 2020, 6 new districts were formed by bifurcating existing units: Tenkasi (from Tirunelveli), Chengalpattu (from Kancheepuram), Tirupathur and Ranipet (from Vellore), Kallakurichi (from Viluppuram), and Mayiladuthurai (from Nagapattinam). Merging recent portal data (e.g. Udyam MSME) with Census 2011 baseline data without harmonizing boundaries creates false missingness and artificial longitudinal breaks.
+* **Decision:**  
+  1. Standardize on the **32-district Census 2011 spatial baseline** (`33_602` through `33_633`) as the primary comparative frame.
+  2. For subsequent surveys or administrative portal reports reporting on 38 districts, aggregate child bifurcated district counts back into parent district boundaries.
+  3. Document all boundary harmonizations in `docs/DATA_DICTIONARY.md` and the coverage report.
+* **Consequences:**  
+  - Eliminates artificial statistical shifts caused by administrative boundary changes.
+  - Guarantees complete cross-sectional compatibility across longitudinal indicators.
+
+---
+
+## ADR 011: Source-Specific Adapter Pattern & Raw File Immutability
+
+* **Date:** 2026-10-11
+* **Status:** Accepted (Stage 2B)
+* **Context:**  
+  Each government publisher releases data with distinct column layouts, punctuation, and conventions (e.g. Census PCA vs Udyam MSME tables vs RBI BSR banking sheets). Placing all parsing logic into a monolithic script leads to brittle, unmaintainable code.
+* **Decision:**  
+  1. Implement dedicated, decoupled adapter classes inheriting from `BaseSourceAdapter` under `src/data/adapters/`.
+  2. Ensure raw source files in `data/raw/` are strictly immutable and never modified in-place.
+  3. Every adapter must output an `AdapterResult` that captures canonical long-form observations while recording rejected or unparseable records with explicit reasons.
+* **Consequences:**  
+  - Isolates publisher-specific parsing variations into dedicated classes (`CensusTNAdapter`, `UdyamTNAdapter`, `BankingTNAdapter`, `InfrastructureTNAdapter`).
+  - Ensures rejected records are transparently reported rather than silently ignored.
+

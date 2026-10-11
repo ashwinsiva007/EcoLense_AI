@@ -1,5 +1,11 @@
 """Data ingestion, validation, and preprocessing package for EconLens AI."""
 
+from src.data.acquisition.fetcher import DataFetcher, FetchResult
+from src.data.adapters.banking_adapter import BankingTNAdapter
+from src.data.adapters.base_adapter import AdapterResult, BaseSourceAdapter
+from src.data.adapters.census_adapter import CensusTNAdapter
+from src.data.adapters.infrastructure_adapter import InfrastructureTNAdapter
+from src.data.adapters.udyam_adapter import UdyamTNAdapter
 from src.data.data_loader import (
     DataLoader,
     DataLoaderError,
@@ -11,6 +17,7 @@ from src.data.data_loader import (
     load_csv,
     load_json,
 )
+from src.data.inventory import DataInventoryManager, DatasetInventoryEntry
 from src.data.preprocessing import (
     CleaningReport,
     PreprocessingConfig,
@@ -74,4 +81,17 @@ __all__ = [
     # Quality Report
     "generate_quality_report",
     "format_quality_report_markdown",
+    # Acquisition
+    "DataFetcher",
+    "FetchResult",
+    # Adapters
+    "BaseSourceAdapter",
+    "AdapterResult",
+    "CensusTNAdapter",
+    "UdyamTNAdapter",
+    "BankingTNAdapter",
+    "InfrastructureTNAdapter",
+    # Inventory
+    "DataInventoryManager",
+    "DatasetInventoryEntry",
 ]

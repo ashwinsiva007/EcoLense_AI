@@ -17,6 +17,16 @@ MODULES_TO_TEST = [
     "src.data.data_loader",
     "src.data.preprocessing",
     "src.data.validation",
+    "src.data.acquisition",
+    "src.data.acquisition.fetcher",
+    "src.data.adapters",
+    "src.data.adapters.base_adapter",
+    "src.data.adapters.census_adapter",
+    "src.data.adapters.udyam_adapter",
+    "src.data.adapters.banking_adapter",
+    "src.data.adapters.infrastructure_adapter",
+    "src.data.inventory",
+    "src.data.pipeline",
     "src.analytics",
     "src.analytics.exploratory_analysis",
     "src.analytics.opportunity_scoring",
@@ -47,6 +57,13 @@ def test_core_classes_exported() -> None:
         DatasetSource,
         SourceRegistry,
         generate_quality_report,
+        DataFetcher,
+        BaseSourceAdapter,
+        CensusTNAdapter,
+        UdyamTNAdapter,
+        BankingTNAdapter,
+        InfrastructureTNAdapter,
+        DataInventoryManager,
     )
     from src.analytics import ExploratoryAnalyzer, OpportunityScorer
     from src.intelligence import BottleneckDetector, RegionalForecaster, ScenarioSimulator
@@ -60,6 +77,13 @@ def test_core_classes_exported() -> None:
     assert DatasetSource is not None
     assert SourceRegistry is not None
     assert callable(generate_quality_report)
+    assert DataFetcher is not None
+    assert BaseSourceAdapter is not None
+    assert CensusTNAdapter is not None
+    assert UdyamTNAdapter is not None
+    assert BankingTNAdapter is not None
+    assert InfrastructureTNAdapter is not None
+    assert DataInventoryManager is not None
     assert ExploratoryAnalyzer is not None
     assert OpportunityScorer is not None
     assert BottleneckDetector is not None

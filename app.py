@@ -69,9 +69,46 @@ def render_overview_page() -> None:
             "In accordance with our strict **anti-fabrication policy (ADR 003)**, the dashboard will not display "
             "simulated or fabricated regional economic statistics until actual verified datasets are integrated."
         )
+    else:
+        st.success(
+            "✅ **Stage 2B Active: Real Datasets Ingested & Verified.**\n\n"
+            "Official open datasets for the pilot study geography (**Tamil Nadu — 32 Baseline Districts**) have been "
+            "acquired, validated against Stage 2A contracts, and standardized into canonical long-form observations."
+        )
+
+        try:
+            obs_file = settings.processed_data_dir / "canonical_observations_tn.csv"
+            if obs_file.exists():
+                import pandas as pd
+                obs_df = pd.read_csv(obs_file)
+                dist_regions = obs_df["region_id"].nunique()
+                dist_indicators = obs_df["indicator_code"].nunique()
+                dist_periods = sorted(obs_df["reference_period"].unique().tolist())
+
+                mcol1, mcol2, mcol3, mcol4 = st.columns(4)
+                with mcol1:
+                    st.metric("Study Geography", f"{dist_regions} Districts (TN)")
+                with mcol2:
+                    st.metric("Harmonized Indicators", f"{dist_indicators} Indicators")
+                with mcol3:
+                    st.metric("Total Observations", f"{len(obs_df):,} records")
+                with mcol4:
+                    st.metric("Reference Periods", f"{', '.join(dist_periods)}")
+
+                with st.expander("🔍 Inspect Standardized Observations (Sample)", expanded=False):
+                    st.dataframe(obs_df.head(20), use_container_width=True)
+
+                st.warning(
+                    "⚠️ **Boundary Harmonization Advisory (ADR 010):** "
+                    "Tamil Nadu had 32 districts in Census 2011. Subsequent administrative bifurcations "
+                    "(Tenkasi, Chengalpattu, Tirupathur, Ranipet, Kallakurichi, Mayiladuthurai) are harmonized "
+                    "to the 32-district baseline to guarantee temporal comparability across survey cycles."
+                )
+        except Exception as exc:
+            logger.warning("Failed to render processed observations preview: %s", exc)
 
     if total_sources > 0:
-        with st.expander("📚 Dataset Source Registry &amp; Provenance Tracking", expanded=False):
+        with st.expander("📚 Dataset Source Registry & Provenance Tracking", expanded=False):
             st.markdown(
                 f"**Registry Status Breakdown:** "
                 f"Planned: `{registry_summary.get('planned', 0)}` | "

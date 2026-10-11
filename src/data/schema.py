@@ -91,10 +91,20 @@ INDICATOR_BOUNDS_RULES: Dict[str, Tuple[Optional[float], Optional[float]]] = {
     "count": (0.0, None),
     # Specific indicator rules
     "LIT_RATE_TOT": (0.0, 100.0),
+    "LIT_RATE_FEM": (0.0, 100.0),
     "WPR_TOT": (0.0, 100.0),
+    "WPR_FEM": (0.0, 100.0),
     "FLFPR_TOT": (0.0, 100.0),
     "ROAD_DENSITY": (0.0, None),
+    "ROAD_SURFACED_KM": (0.0, None),
     "POPULATION_TOT": (1.0, None),
+    "CREDIT_DEPOSIT_RATIO": (0.0, None),
+    "BANK_CREDIT_AMT": (0.0, None),
+    "BANK_DEPOSIT_AMT": (0.0, None),
+    "MSME_MICRO_COUNT": (0.0, None),
+    "MSME_SMALL_COUNT": (0.0, None),
+    "MSME_MEDIUM_COUNT": (0.0, None),
+    "MSME_TOTAL_COUNT": (0.0, None),
 }
 
 
