@@ -1,0 +1,6 @@
+# Ignore Python runtime files and heavy requirements during Vercel deployment
+.venv
+.pytest_cache
+tests/
+requirements.txt
+Procfile

@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EconLens AI — Regional Economic Intelligence Platform</title>
+    <meta name="description" content="Evidence-grounded regional economic intelligence platform. Transparent opportunity scoring, structural bottleneck diagnostics, and longitudinal simulation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #070b14;
+            --surface: #0e1526;
+            --surface-elevated: rgba(19, 29, 51, 0.75);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.35);
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+            --accent-indigo: #818cf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #f43f5e;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+            --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 35px -5px rgba(56, 189, 248, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 10% 15%, rgba(56, 189, 248, 0.08) 0px, transparent 40%),
+                radial-gradient(at 90% 85%, rgba(129, 140, 248, 0.08) 0px, transparent 40%),
+                radial-gradient(at 50% 50%, rgba(14, 21, 38, 0.5) 0px, transparent 80%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism utility */
+        .glass {
+            background: var(--surface-elevated);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav.navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 800;
+            font-size: 1.3rem;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #0284c7, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+            font-size: 1.2rem;
+        }
+
+        .brand-text span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #0369a1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .badge-accent {
+            background: var(--accent-glow);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--accent);
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: var(--danger);
+        }
+
+        /* Hero Section */
+        header.hero {
+            padding: 72px 0 48px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin: 20px auto 16px;
+            max-width: 920px;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p.subtitle {
+            font-size: 1.18rem;
+            color: var(--text-secondary);
+            max-width: 760px;
+            margin: 0 auto 36px;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .stat-card {
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: left;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .stat-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Section styles */
+        section.section-block {
+            padding: 64px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .section-header {
+            margin-bottom: 36px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        /* Tabs and Controls */
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 6px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--surface-elevated);
+            color: var(--accent);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Data table container */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            text-align: left;
+        }
+
+        table.data-table th {
+            background: rgba(14, 21, 38, 0.95);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        table.data-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+        }
+
+        table.data-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        table.data-table code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            color: var(--accent);
+        }
+
+        /* Live Simulator Box */
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .simulator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sim-control-panel {
+            padding: 24px;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .sim-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sim-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .sim-action-btn:hover {
+            background: rgba(56, 189, 248, 0.06);
+            border-color: var(--border-hover);
+            transform: translateX(4px);
+        }
+
+        .sim-action-btn.active {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+            color: #ffffff;
+        }
+
+        .sim-output-panel {
+            padding: 24px;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-output {
+            font-family: var(--font-mono);
+            background: #04070e;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            font-size: 0.82rem;
+            color: #38bdf8;
+            overflow-x: auto;
+            flex-grow: 1;
+            white-space: pre-wrap;
+            max-height: 420px;
+        }
+
+        /* Roadmap Timeline */
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .stage-card {
+            padding: 24px;
+            border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stage-card.active-stage {
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.15);
+        }
+
+        .stage-card.active-stage::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+        }
+
+        .stage-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stage-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stage-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .stage-deliverables {
+            list-style: none;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stage-deliverables li::before {
+            content: "✓ ";
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        /* Footer */
+        footer.app-footer {
+            padding: 48px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: #04070e;
+            text-align: center;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        footer.app-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer.app-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-inner">
+            <a href="#" class="brand" id="brand-link">
+                <div class="brand-icon">🌐</div>
+                <div class="brand-text">EconLens <span>AI</span></div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#overview" id="nav-overview">Overview</a></li>
+                <li><a href="#schema" id="nav-schema">Canonical Schema</a></li>
+                <li><a href="#registry" id="nav-registry">Source Registry</a></li>
+                <li><a href="#simulator" id="nav-simulator">Pipeline Simulator</a></li>
+                <li><a href="#roadmap" id="nav-roadmap">Roadmap</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="https://github.com/ashwinsiva007/EcoLense_AI" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" id="btn-github">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                    GitHub
+                </a>
+                <a href="https://share.streamlit.io" target="_blank" rel="noopener noreferrer" class="btn btn-primary" id="btn-streamlit">
+                    🚀 Launch Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero" id="overview">
+        <div class="container">
+            <div class="badge-pill badge-accent" id="badge-stage">
+                ⚡ Stage 2A Active: Data Architecture &amp; Dataset Readiness
+            </div>
+            <h1 id="hero-title">Evidence-Grounded Regional Economic Intelligence</h1>
+            <p class="subtitle" id="hero-subtitle">
+                EconLens AI analyzes regional economic opportunities, quantifies structural bottlenecks, 
+                and models counterfactual development scenarios with strict anti-fabrication guardrails.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <a href="#schema" class="btn btn-primary" id="btn-explore-schema">Inspect Data Schema</a>
+                <a href="#simulator" class="btn btn-secondary" id="btn-run-tests">Test Validation Pipeline</a>
+            </div>
+
+            <!-- Metric Cards -->
+            <div class="hero-stats" id="hero-stats">
+                <div class="stat-card glass" id="card-tests">
+                    <div class="stat-label">Automated Tests</div>
+                    <div class="stat-value" style="color: #38bdf8;">67 / 67 Passed</div>
+                    <div class="stat-desc">Zero regressions across loaders, schema &amp; preprocessors</div>
+                </div>
+                <div class="stat-card glass" id="card-schema">
+                    <div class="stat-label">Interchange Standard</div>
+                    <div class="stat-value" style="color: #818cf8;">Long-Form</div>
+                    <div class="stat-desc">Composite key: (region, indicator, period)</div>
+                </div>
+                <div class="stat-card glass" id="card-fabrication">
+                    <div class="stat-label">Anti-Fabrication</div>
+                    <div class="stat-value" style="color: #10b981;">ADR 003 &amp; 008</div>
+                    <div class="stat-desc">Zero silent zero-replacements or synthetic leakage</div>
+                </div>
+                <div class="stat-card glass" id="card-provenance">
+                    <div class="stat-label">Provenance Registry</div>
+                    <div class="stat-value" style="color: #f59e0b;">4 States</div>
+                    <div class="stat-desc">Planned &bull; Acquired &bull; Validated &bull; Rejected</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Canonical Schema Section -->
+    <section class="section-block" id="schema">
+        <div class="container">
+            <div class="section-header">
+                <div class="badge-pill badge-accent">Canonical Data Contract</div>
+                <h2>Long-Form Observation Model</h2>
+                <p>Decouples multi-source indicator observations from rigid physical table columns. Every empirical measurement conforms to this 14-field specification.</p>
+            </div>
+
+            <div class="table-responsive glass">
+                <table class="data-table" id="schema-table">
+                    <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Data Type</th>
+                            <th>Nullable</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>region_id</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-danger" style="font-size: 0.7rem; padding: 2px 8px;">No (PK)</span></td>
+                            <td>Required</td>
+                            <td>Stable geographic code (Census 2011, LGD, or ISO code).</td>
+                            <td><code>29_572</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>region_name</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-danger" style="font-size: 0.7rem; padding: 2px 8px;">No</span></td>
+                            <td>Required</td>
+                            <td>Official human-readable region label in Title Case.</td>
+                            <td><code>Bengaluru Urban</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>parent_region_id</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-success" style="font-size: 0.7rem; padding: 2px 8px;">Yes</span></td>
+                            <td>Contextual</td>
+                            <td>Parent administrative territory identifier (e.g., state code).</td>
+                            <td><code>ST_KA</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>geographic_level</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-danger" style="font-size: 0.7rem; padding: 2px 8px;">No</span></td>
+                            <td>Required</td>
+                            <td>Supported hierarchy: <code>district</code>, <code>state</code>, <code>block</code>, <code>national</code>.</td>
+                            <td><code>district</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>indicator_code</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-danger" style="font-size: 0.7rem; padding: 2px 8px;">No (PK)</span></td>
+                            <td>Required</td>
+                            <td>Stable uppercase code for measured indicator.</td>
+                            <td><code>LIT_RATE_TOT</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>indicator_name</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-danger" style="font-size: 0.7rem; padding: 2px 8px;">No</span></td>
+                            <td>Required</td>
+                            <td>Descriptive human-readable indicator name.</td>
+                            <td><code>Total Literacy Rate</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>value</code></td>
+                            <td>Float</td>
+                            <td><span class="badge-pill badge-success" style="font-size: 0.7rem; padding: 2px 8px;">Yes (NaN)</span></td>
+                            <td>Required</td>
+                            <td>Numeric observation. Missing values remain NaN; never replaced with zero.</td>
+                            <td><code>78.5</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>unit</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-danger" style="font-size: 0.7rem; padding: 2px 8px;">No</span></td>
+                            <td>Required</td>
+                            <td>Measurement unit. Must be uniform across rows for a given indicator.</td>
+                            <td><code>percentage</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>reference_period</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-danger" style="font-size: 0.7rem; padding: 2px 8px;">No (PK)</span></td>
+                            <td>Required</td>
+                            <td>Validated period string (e.g. <code>YYYY</code>, <code>YYYY-YY</code>, <code>QX-YYYY</code>).</td>
+                            <td><code>2021-22</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>source_id</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-danger" style="font-size: 0.7rem; padding: 2px 8px;">No</span></td>
+                            <td>Required</td>
+                            <td>Foreign key linking to Dataset Source Registry.</td>
+                            <td><code>SRC_CENSUS_2011</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>source_record_id</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-success" style="font-size: 0.7rem; padding: 2px 8px;">Yes</span></td>
+                            <td>Contextual</td>
+                            <td>Source row or table index line reference for lineage audit.</td>
+                            <td><code>REC_001</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>quality_status</code></td>
+                            <td>String</td>
+                            <td><span class="badge-pill badge-success" style="font-size: 0.7rem; padding: 2px 8px;">Yes</span></td>
+                            <td>Contextual</td>
+                            <td>Validation state: <code>raw</code>, <code>provisional</code>, <code>validated</code>, <code>synthetic</code>.</td>
+                            <td><code>validated</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Source Registry Section -->
+    <section class="section-block" id="registry">
+        <div class="container">
+            <div class="section-header">
+                <div class="badge-pill badge-accent">Provenance Tracking</div>
+                <h2>Dataset Source Registry</h2>
+                <p>All candidates must be registered before ingestion. Datasets transition across strict verification states.</p>
+            </div>
+
+            <div class="table-responsive glass">
+                <table class="data-table" id="registry-table">
+                    <thead>
+                        <tr>
+                            <th>Source ID</th>
+                            <th>Dataset Name</th>
+                            <th>Publisher</th>
+                            <th>Coverage</th>
+                            <th>Reference Period</th>
+                            <th>License</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>SRC_EXAMPLE_SYNTHETIC</code></td>
+                            <td>Synthetic District Demonstration Fixture</td>
+                            <td>EconLens AI Project Test Suite</td>
+                            <td>Synthetic Test Geography</td>
+                            <td>2021-22</td>
+                            <td>Internal / MIT</td>
+                            <td><span class="badge-pill badge-success">VALIDATED (SAMPLE)</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>SRC_PLANNED_CENSUS_2011</code></td>
+                            <td>Census of India 2011 - Primary Census Abstract</td>
+                            <td>Office of the Registrar General of India</td>
+                            <td>All-India (Districts)</td>
+                            <td>2011</td>
+                            <td>OGDL India</td>
+                            <td><span class="badge-pill badge-warning">PLANNED CANDIDATE</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>SRC_PLANNED_PLFS_2022</code></td>
+                            <td>Periodic Labour Force Survey (PLFS) Annual Report</td>
+                            <td>NSSO, Ministry of Statistics &amp; Programme Implementation</td>
+                            <td>All-India</td>
+                            <td>2021-22</td>
+                            <td>Under Review</td>
+                            <td><span class="badge-pill badge-warning">PLANNED CANDIDATE</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pipeline Validation Simulator -->
+    <section class="section-block" id="simulator">
+        <div class="container">
+            <div class="section-header">
+                <div class="badge-pill badge-accent">Interactive Pipeline Engine</div>
+                <h2>Data Quality &amp; Validation Simulator</h2>
+                <p>Inspect how EconLens AI's deterministic validator protects analytics from corrupted, duplicate, or unverified data.</p>
+            </div>
+
+            <div class="simulator-grid">
+                <div class="sim-control-panel glass">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Select Test Scenario</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">Trigger diagnostic tests against the DataValidator contract:</p>
+                    
+                    <div class="sim-btn-group">
+                        <button class="sim-action-btn active" id="sim-btn-valid" onclick="runSim('valid')">
+                            <span>✅ Valid Canonical Dataset</span>
+                            <small style="color: var(--success);">0 Errors</small>
+                        </button>
+                        <button class="sim-action-btn" id="sim-btn-missing-id" onclick="runSim('missing-id')">
+                            <span>❌ Missing Region Identifier</span>
+                            <small style="color: var(--danger);">Fatal Error</small>
+                        </button>
+                        <button class="sim-action-btn" id="sim-btn-dupe" onclick="runSim('dupe')">
+                            <span>❌ Duplicate Observation Key</span>
+                            <small style="color: var(--danger);">Primary Key Conflict</small>
+                        </button>
+                        <button class="sim-action-btn" id="sim-btn-bounds" onclick="runSim('bounds')">
+                            <span>❌ Out-of-Bounds Indicator</span>
+                            <small style="color: var(--danger);">Value &gt; 100%</small>
+                        </button>
+                        <button class="sim-action-btn" id="sim-btn-unregistered" onclick="runSim('unregistered')">
+                            <span>⚠️ Unregistered Source ID</span>
+                            <small style="color: var(--warning);">Audit Warning</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sim-output-panel glass">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="font-size: 1.1rem;">Validation Report Output</h3>
+                        <span class="badge-pill badge-success" id="sim-status-badge">PASSED</span>
+                    </div>
+                    <div class="code-output" id="sim-output">
+{
+  "is_valid": true,
+  "row_count": 6,
+  "column_count": 14,
+  "duplicate_count": 0,
+  "errors": [],
+  "warnings": [],
+  "summary": "Validation PASSED: 6 rows, 14 columns. Errors: 0, Warnings: 0.",
+  "quality_report": {
+    "readiness_status": "READY",
+    "distinct_regions": ["DEMO_DIST_01", "DEMO_DIST_02"],
+    "distinct_indicators": ["LIT_RATE_TOT", "ROAD_DENSITY", "WPR_TOT"],
+    "missing_values_by_column": {}
+  }
+}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section class="section-block" id="roadmap">
+        <div class="container">
+            <div class="section-header">
+                <div class="badge-pill badge-accent">Multi-Stage Roadmap</div>
+                <h2>Engineering Milestone Progress</h2>
+                <p>Systematic, controlled progression from skeleton foundation to explainable intelligence.</p>
+            </div>
+
+            <div class="roadmap-grid">
+                <div class="stage-card glass">
+                    <div class="stage-top">
+                        <span class="badge-pill badge-success">Completed</span>
+                        <small style="color: var(--text-muted);">Stage 1</small>
+                    </div>
+                    <div class="stage-title">Engineering Foundation</div>
+                    <p class="stage-desc">Modular monolith skeleton, centralized settings, logging, test suite, and base app.</p>
+                    <ul class="stage-deliverables">
+                        <li>Modular package hierarchy</li>
+                        <li>Config &amp; settings management</li>
+                        <li>Anti-fabrication baseline</li>
+                    </ul>
+                </div>
+
+                <div class="stage-card glass active-stage">
+                    <div class="stage-top">
+                        <span class="badge-pill badge-accent">Active &bull; Completed</span>
+                        <small style="color: var(--accent);">Stage 2A</small>
+                    </div>
+                    <div class="stage-title">Data Architecture &amp; Readiness</div>
+                    <p class="stage-desc">Canonical long-form observation schema, source registry, safe loaders, and validators.</p>
+                    <ul class="stage-deliverables">
+                        <li>Long-form observation contract</li>
+                        <li>Source registry &amp; provenance model</li>
+                        <li>67 Automated tests passing</li>
+                    </ul>
+                </div>
+
+                <div class="stage-card glass">
+                    <div class="stage-top">
+                        <span class="badge-pill badge-warning">Next Stage</span>
+                        <small style="color: var(--text-muted);">Stage 2B</small>
+                    </div>
+                    <div class="stage-title">Study Geography &amp; Ingestion</div>
+                    <p class="stage-desc">Target state/district selection, official open dataset acquisition, and raw ingestion.</p>
+                    <ul class="stage-deliverables">
+                        <li>Target region selection</li>
+                        <li>Census 2011 &amp; PLFS ingestion</li>
+                        <li>Baseline quality audits</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="https://github.com/ashwinsiva007/EcoLense_AI" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+                <li><a href="https://share.streamlit.io" target="_blank" rel="noopener noreferrer">Streamlit Cloud App</a></li>
+                <li><a href="#schema">Data Dictionary</a></li>
+                <li><a href="#roadmap">Development Roadmap</a></li>
+            </ul>
+            <p>&copy; 2026 EconLens AI Platform &bull; Built with Python, Streamlit, and Open Data Standards</p>
+            <p style="margin-top: 8px; font-size: 0.8rem; color: #475569;">
+                Disclaimer: Regional opportunity scores and bottleneck findings are comparative heuristics and do not constitute unproven causal assertions.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Interactive Simulation Script -->
+    <script>
+        const scenarios = {
+            'valid': {
+                isValid: true,
+                badgeText: 'PASSED',
+                badgeClass: 'badge-pill badge-success',
+                output: {
+                    "is_valid": true,
+                    "row_count": 6,
+                    "column_count": 14,
+                    "duplicate_count": 0,
+                    "errors": [],
+                    "warnings": [],
+                    "summary": "Validation PASSED: 6 rows, 14 columns. Errors: 0, Warnings: 0.",
+                    "quality_report": {
+                        "readiness_status": "READY",
+                        "distinct_regions": ["DEMO_DIST_01", "DEMO_DIST_02"],
+                        "distinct_indicators": ["LIT_RATE_TOT", "ROAD_DENSITY", "WPR_TOT"],
+                        "missing_values_by_column": {}
+                    }
+                }
+            },
+            'missing-id': {
+                isValid: false,
+                badgeText: 'FAILED',
+                badgeClass: 'badge-pill badge-danger',
+                output: {
+                    "is_valid": false,
+                    "row_count": 6,
+                    "column_count": 14,
+                    "duplicate_count": 0,
+                    "errors": [
+                        "Column 'region_id' contains 1 blank or null identifier(s)."
+                    ],
+                    "warnings": [],
+                    "summary": "Validation FAILED: 6 rows, 14 columns. Errors: 1, Warnings: 0.",
+                    "quality_report": {
+                        "readiness_status": "NEEDS_REVISION",
+                        "invalid_value_counts": { "region_id_blank": 1 }
+                    }
+                }
+            },
+            'dupe': {
+                isValid: false,
+                badgeText: 'FAILED',
+                badgeClass: 'badge-pill badge-danger',
+                output: {
+                    "is_valid": false,
+                    "row_count": 7,
+                    "column_count": 14,
+                    "duplicate_count": 2,
+                    "errors": [
+                        "Duplicate observation key(s) detected across 2 rows. Primary key: ['region_id', 'indicator_code', 'reference_period']. Examples: [{'region_id': 'DEMO_DIST_01', 'indicator_code': 'LIT_RATE_TOT', 'reference_period': '2021-22'}]"
+                    ],
+                    "warnings": [],
+                    "summary": "Validation FAILED: 7 rows, 14 columns. Errors: 1, Warnings: 0.",
+                    "quality_report": {
+                        "readiness_status": "NEEDS_REVISION",
+                        "duplicate_observation_keys": 2
+                    }
+                }
+            },
+            'bounds': {
+                isValid: false,
+                badgeText: 'FAILED',
+                badgeClass: 'badge-pill badge-danger',
+                output: {
+                    "is_valid": false,
+                    "row_count": 6,
+                    "column_count": 14,
+                    "duplicate_count": 0,
+                    "errors": [
+                        "Out-of-bounds value 142.5 for indicator 'LIT_RATE_TOT' (unit: 'percentage'). Expected value <= 100.0."
+                    ],
+                    "warnings": [],
+                    "summary": "Validation FAILED: 6 rows, 14 columns. Errors: 1, Warnings: 0.",
+                    "quality_report": {
+                        "readiness_status": "NEEDS_REVISION",
+                        "invalid_value_counts": { "out_of_bounds_values": 1 }
+                    }
+                }
+            },
+            'unregistered': {
+                isValid: true,
+                badgeText: 'WARNING',
+                badgeClass: 'badge-pill badge-warning',
+                output: {
+                    "is_valid": true,
+                    "row_count": 6,
+                    "column_count": 14,
+                    "duplicate_count": 0,
+                    "errors": [],
+                    "warnings": [
+                        "Source ID(s) ['SRC_UNAUDITED_PORTAL'] are not registered in the Source Registry. Register all candidate datasets to maintain verified provenance."
+                    ],
+                    "summary": "Validation PASSED: 6 rows, 14 columns. Errors: 0, Warnings: 1.",
+                    "quality_report": {
+                        "readiness_status": "READY",
+                        "source_audit": {
+                            "source_statuses": { "SRC_UNAUDITED_PORTAL": "unregistered" }
+                        }
+                    }
+                }
+            }
+        };
+
+        function runSim(scenarioKey) {
+            // Update active button
+            document.querySelectorAll('.sim-action-btn').forEach(btn => btn.classList.remove('active'));
+            const targetBtn = document.getElementById(`sim-btn-${scenarioKey}`);
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const scen = scenarios[scenarioKey];
+            if (!scen) return;
+
+            const badge = document.getElementById('sim-status-badge');
+            badge.className = scen.badgeClass;
+            badge.innerText = scen.badgeText;
+
+            const outputEl = document.getElementById('sim-output');
+            outputEl.innerText = JSON.stringify(scen.output, null, 2);
+        }
+    </script>
+</body>
+</html>
