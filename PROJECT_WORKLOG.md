@@ -193,3 +193,21 @@ This document serves as the mandatory, chronological, append-oriented engineerin
 * **Milestone:** `STAGE-2B-STUDY-GEOGRAPHY-AND-DATASET-INGESTION`
 * **Objective:** Select the target study geography (e.g., Karnataka districts or a multi-state cohort), acquire official open datasets (Census 2011 Primary Census Abstract, PLFS district/state reports, Udyam MSME counts), validate them against Stage 2A contracts, transform them into `data/processed/`, and populate live data quality views.
 
+---
+
+## Deployment Update: Vercel Cloud Readiness Resolution
+
+* **Date:** 2026-10-11
+* **Objective:** Resolve Vercel build and deployment failures caused by deprecated serverless configurations and heavy data-science dependencies.
+* **Root Cause Diagnosis:**
+  1. Legacy `vercel.json` used deprecated `"builds"` syntax with `"use": "@vercel/python"`.
+  2. Heavy numerical/geospatial packages in `requirements.txt` (`geopandas`, `shapely`, `scikit-learn`, `scipy`) exceed Vercel's Serverless Function size limit (250 MB) and fail during build on Linux containers lacking system GDAL/GEOS libraries.
+  3. Streamlit requires a persistent stateful WebSocket server (`tornado`) and cannot run on stateless Serverless Lambdas.
+* **Resolution Implemented:**
+  1. Created a dedicated, rich, responsive single-page web application (`index.html`) using Vanilla HTML5/CSS/JavaScript with glassmorphic dark theme, Google Fonts (`Plus Jakarta Sans`), interactive canonical schema inspector, dataset source registry table, and live validation simulator.
+  2. Updated `vercel.json` to modern static routing with `cleanUrls: true` and rewrites to `/index.html`.
+  3. Added `.vercelignore` to exclude `.venv`, `requirements.txt`, `Procfile`, and tests from Vercel's upload bundle, allowing instant zero-error edge deployment.
+  4. Preserved `app.py` and `requirements.txt` intact for native Streamlit execution (`streamlit run app.py`) and Streamlit Community Cloud hosting.
+* **Outcome:** Clean deployment configuration committed and pushed to GitHub (`fae72d2`).
+
+
