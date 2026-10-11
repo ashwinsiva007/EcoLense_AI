@@ -178,3 +178,23 @@ This document captures key architectural and technical decisions made during the
   - Isolates publisher-specific parsing variations into dedicated classes (`CensusTNAdapter`, `UdyamTNAdapter`, `BankingTNAdapter`, `InfrastructureTNAdapter`).
   - Ensures rejected records are transparently reported rather than silently ignored.
 
+---
+
+## ADR 012: Exploratory Data Analysis Architecture, Disparity Metrics & Non-Causal Disclosures
+
+* **Date:** 2026-10-11
+* **Status:** Accepted (Stage 3)
+* **Context:**  
+  Regional exploratory data analysis requires computing parametric and non-parametric descriptive statistics, identifying regional disparities, and calculating bivariate correlation matrices. In regional economics, correlation is frequently conflated with causation, and extreme values are often erroneously dropped as outliers.
+* **Decision:**  
+  1. Decouple analytical computation (`src/analytics/exploratory_analysis.py`), chart builders (`src/analytics/eda_charts.py`), and reporting pipelines (`src/analytics/eda_report.py`).
+  2. All bivariate correlation matrices must carry explicit disclosures stating that Pearson $r$ measures linear association and does not establish causation or policy direction.
+  3. Regional comparisons and rankings must strictly compare observations sharing the identical reference period and geographic level.
+  4. Outliers must never be automatically removed merely for being extreme; extreme values in regional data often represent authentic capital concentrations (e.g. Chennai's banking credit or enterprise count). Provenance is strictly preserved.
+  5. Missing values remain explicit `NaN`s; zero-replacement is prohibited.
+* **Consequences:**  
+  - Protects users from misleading causal inferences.
+  - Maintains statistical integrity across regional rankings and disparity ratios.
+  - Guarantees complete reproducibility of markdown and JSON diagnostic dossiers.
+
+

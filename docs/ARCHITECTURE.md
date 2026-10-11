@@ -125,6 +125,24 @@ Stage 2A establishes the concrete data contracts, loading mechanisms, schema enf
 - **Reproducible Pipeline Orchestrator (`src/data/pipeline.py` & `scripts/manage_data.py`):**
   - Centralized CLI commands: `status`, `acquire`, `validate`, `standardize`, `report`, `all`.
 
+### 3.8 Exploratory Data Analysis & Analytical Pipeline (Stage 3 Implementation)
+- **Modular Analysis Engine (`src/analytics/exploratory_analysis.py`):**
+  - Dataset overview and completeness metrics (`compute_dataset_overview`).
+  - Comprehensive quality audits: missingness, non-finite values, duplicate keys (`compute_data_quality`).
+  - Parametric and non-parametric indicator distributions: mean, median, std, min, max, quartiles, IQR (`compute_indicator_statistics`).
+  - Region-by-region comparative rankings with group average delta calculations (`compute_regional_rankings`).
+  - Disparity profiling: highest and lowest observed values, regional spread, and disparity ratios (`compute_regional_comparisons`).
+  - Longitudinal readiness and temporal coverage audits (`compute_time_series_availability`).
+  - Pairwise bivariate correlation matrices with explicit sample sizes ($N$) and non-causal disclosures (`compute_indicator_correlations`).
+- **Dark-Themed Chart Generators (`src/analytics/eda_charts.py`):**
+  - Publication-grade Plotly visualizations using the platform's dark telemetry theme (`#0f1117`, cyan/teal accents).
+  - Horizontal bar rankings with group mean benchmark lines.
+  - Box plots, distribution histograms, scatter plots with regression trend lines, correlation heatmaps, and missingness maps.
+- **Reproducible Output Generators (`src/analytics/eda_report.py` & `scripts/run_eda.py`):**
+  - Generates machine-readable `data/processed/eda_summary.json`.
+  - Generates cross-sectional regional indicator wide table `data/processed/regional_summary_tn.csv`.
+  - Generates narrative markdown report `docs/EDA_REPORT.md`.
+
 ---
 
 ## 4. Module Responsibilities Across Layers

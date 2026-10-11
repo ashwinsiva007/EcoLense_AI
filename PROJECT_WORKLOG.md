@@ -366,6 +366,108 @@ Between 2018 and 2020, 6 new districts were formed in Tamil Nadu by bifurcation 
 * **Milestone:** `STAGE-3-EXPLORATORY-DATA-ANALYSIS-AND-SPATIAL-DISPARITY-PROFILING`
 * **Objective:** Build univariate distributions, inter-district disparity indices, correlation matrices between infrastructure/education/MSME densities, and Plotly comparative visualizations across the 32 Tamil Nadu districts.
 
+---
+
+## Stage 3: Exploratory Data Analysis, Regional Patterns & Insight Preparation (Completed)
+
+* **Date:** 2026-10-11
+* **Milestone:** `STAGE-3-EXPLORATORY-DATA-ANALYSIS-AND-SPATIAL-DISPARITY-PROFILING`
+* **Engineering Objective:** Perform rigorous, reproducible exploratory data analysis of the validated Tamil Nadu canonical observations (448 records, 32 districts), generate analytical outputs (JSON, CSV, Markdown), establish dark-themed visualization pipelines, document dashboard UI/UX specifications, and verify analytical integrity without asserting unvalidated causal claims.
+
+### 1. Files Created and Modified
+* **Created:**
+  - `src/analytics/eda_charts.py`: Dark telemetry Plotly chart builders for regional rankings, box plots, histograms, bivariate scatter plots, correlation heatmaps, and missingness profiles.
+  - `src/analytics/eda_report.py`: Programmatic generators for `eda_summary.json`, `regional_summary_tn.csv`, and `EDA_REPORT.md`.
+  - `scripts/run_eda.py`: Standalone CLI orchestrator for the complete EDA pipeline.
+  - `tests/test_eda.py`: 60 deterministic automated test cases covering statistical summaries, rankings, comparisons, correlations, reporting, and edge cases.
+  - `data/processed/eda_summary.json`: Machine-readable summary statistics and data quality metrics.
+  - `data/processed/regional_summary_tn.csv`: Cross-sectional wide table of 32 Tamil Nadu districts across all 14 canonical indicators.
+  - `docs/EDA_REPORT.md`: Comprehensive analytical diagnostic markdown dossier.
+  - `docs/DASHBOARD_SPEC.md`: Exhaustive visual tokens, information architecture, component specifications, and accessibility standards for Stage 4 dashboard design.
+* **Modified:**
+  - `src/analytics/__init__.py`: Exported all new EDA analysis functions and chart builders.
+  - `src/analytics/exploratory_analysis.py`: Implemented comprehensive statistical, ranking, disparity, correlation, and filtering functions (800+ LOC).
+  - `tests/test_imports.py`: Added import verifications for all newly added analytics classes and methods.
+  - `docs/DECISIONS.md`: Appended ADR 012 (EDA architecture, disparity metrics, non-causal disclosures).
+  - `docs/DEVELOPMENT_PLAN.md`: Marked Stage 3 as Completed and updated roadmap.
+  - `docs/ARCHITECTURE.md`: Added Section 3.8 describing the EDA analytics and visualization layer.
+  - `README.md`: Updated automated test count to 156 and added reproducible EDA pipeline instructions.
+
+### 2. Datasets & Indicators Actually Analyzed
+* **Geography:** State of Tamil Nadu (State Code `33`), 32 baseline districts (`33_602` through `33_633`).
+* **Observation Count:** 448 validated canonical long-form observations (zero synthetic records in production data).
+* **Reference Periods:** `2011` (Demographics/Labor), `2020-21` (Banking & Infrastructure), `2022-23` (MSME Registrations).
+* **Indicators Examined (14 total):**
+  1. `POPULATION_TOT` (Census 2011, count)
+  2. `LIT_RATE_TOT` (Census 2011, percentage)
+  3. `LIT_RATE_FEM` (Census 2011, percentage)
+  4. `WPR_TOT` (Census 2011, percentage)
+  5. `WPR_FEM` (Census 2011, percentage)
+  6. `MSME_MICRO_COUNT` (Udyam Portal 2022-23, count)
+  7. `MSME_SMALL_COUNT` (Udyam Portal 2022-23, count)
+  8. `MSME_MEDIUM_COUNT` (Udyam Portal 2022-23, count)
+  9. `MSME_TOTAL_COUNT` (Udyam Portal 2022-23, count)
+  10. `BANK_CREDIT_AMT` (RBI/SLBC 2020-21, crore_inr)
+  11. `BANK_DEPOSIT_AMT` (RBI/SLBC 2020-21, crore_inr)
+  12. `CREDIT_DEPOSIT_RATIO` (RBI/SLBC 2020-21, percentage)
+  13. `ROAD_SURFACED_KM` (TN DoES 2020-21, km)
+  14. `ROAD_DENSITY` (TN DoES 2020-21, km_per_sq_km)
+
+### 3. Key Empirical Findings Supported by the Data
+* **Commercial Banking Depth:**
+  - Mean outstanding bank credit: ₹25,795.06 crore; median: ₹18,675.00 crore.
+  - High spatial concentration: Chennai exhibits ₹198,450.00 crore in credit (7.7× state mean), while Perambalur stands at ₹4,120.00 crore.
+  - Credit-Deposit ratio ranges from 60.59% (The Nilgiris) to 99.90% (Chennai), state mean 82.20% (IQR: 17.54 percentage points).
+* **Enterprise Density (Udyam MSME):**
+  - Total registered MSMEs across Tamil Nadu: 2,546,977 units; district mean: 79,593 units.
+  - Micro enterprises dominate the enterprise structure (97.4% of total registrations).
+  - Spatial concentration: Chennai (331,965), Salem (154,271), Thiruvallur (122,115), and Erode (105,485) represent major industrial clusters.
+* **Infrastructure Disparities:**
+  - Surfaced road density spans from 1.07 km/sq.km (Ramanathapuram) to 8.99 km/sq.km (Chennai, high urban concentration); median: 1.43 km/sq.km.
+* **Correlations & Associations (Non-Causal Disclaimers Enforced):**
+  - High co-occurrence between Bank Credit and Bank Deposits ($r = 0.999$, $N=32$).
+  - Strong positive association between Bank Deposits and Road Density ($r = 0.963$, $N=32$) and Total MSMEs ($r = 0.904$, $N=32$).
+  - Negative linear association between Total Literacy Rate and Worker Population Ratio ($r = -0.796$, $N=32$), reflecting higher educational participation delaying early workforce entry in youth cohorts.
+  - All correlation outputs disclose sample size ($N=32$) and state that correlation does not establish causation.
+
+### 4. Data Quality Profile Results
+* **Total Rows:** 448
+* **Missing Values:** 0 across all 14 columns (100% complete data profile).
+* **Duplicate Primary Keys:** 0 duplicate observation keys.
+* **Invalid or Infinite Numerics:** 0 non-finite values.
+* **Anti-Imputation Policy Compliance:** Preserved raw values as validated; zero synthetic observations introduced.
+
+### 5. Reproducible Commands Actually Executed
+1. `python scripts/run_eda.py`: Full end-to-end EDA execution, producing `eda_summary.json`, `regional_summary_tn.csv`, and `docs/EDA_REPORT.md` (Exit code: 0).
+2. `pytest`: Executed entire automated test suite (156 passed in 1.47s).
+
+### 6. Tests Actually Executed & Real Results
+* **Total Tests:** **156 passed** (0 failed, 0 warnings, 1.47s execution time).
+* **Test Breakdown:**
+  - `tests/test_eda.py`: 60 passed (Descriptive stats, missingness, duplicate detection, regional comparisons, rankings with ties/missing, time-series availability, correlations with small sample bounds, unit compatibility, error handling, report generation).
+  - `tests/test_imports.py`: 35 passed (All analytics functions, chart builders, and report generators verified).
+  - `tests/test_adapters.py`: 7 passed.
+  - `tests/test_data_pipeline.py`: 4 passed.
+  - `tests/test_data_inventory.py`: 3 passed.
+  - `tests/test_network_safety.py`: 3 passed.
+  - `tests/test_validation.py`: 12 passed.
+  - `tests/test_preprocessing.py`: 7 passed.
+  - `tests/test_data_loader.py`: 9 passed.
+  - `tests/test_quality_report.py`: 2 passed.
+  - `tests/test_source_registry.py`: 5 passed.
+  - `tests/test_configuration.py`: 4 passed.
+  - `tests/test_app_helpers.py`: 5 passed.
+
+### 7. Known Limitations
+1. Longitudinal panel data remains limited to 3 distinct discrete reference years (2011, 2020-21, 2022-23); continuous annual time-series is unavailable without intercensal survey microdata.
+2. PLFS district-level estimates remain unmerged due to survey sampling constraints (ADR 003).
+3. Geospatial polygon boundaries (GeoJSON) are scheduled for Stage 4 choropleth integration.
+
+### 8. Exact Next Recommended Stage
+* **Milestone:** `STAGE-4-REGIONAL-OPPORTUNITY-SCORING-AND-RANKING`
+* **Objective:** Implement multi-dimensional composite index normalization (Min-Max/Z-Score), dimension weighting calibration (Infrastructure, Human Capital, Business Dynamism, Financial Access), and transparent factor decomposition across the 32 districts in both the Python analytics engine and interactive UI.
+
+
 
 
 

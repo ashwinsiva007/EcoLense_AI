@@ -87,4 +87,6 @@ data/raw/*
 data/processed/*
 !data/processed/.gitkeep
 !data/processed/*.csv
+!data/processed/*.json
 .vercel
+

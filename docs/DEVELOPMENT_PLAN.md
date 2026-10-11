@@ -4,14 +4,12 @@ This document outlines the systematic, controlled multi-stage engineering plan f
 
 ---
 
-## Roadmap Overview
-
-| Stage | Milestone | Status | Key Deliverables |
+## Roadmap Overview| Stage | Milestone | Status | Key Deliverables |
 | :--- | :--- | :--- | :--- |
 | **Stage 1** | **Engineering Foundation & Skeleton** | **Completed** | Project structure, config, logging, tests, work log, base app. |
 | **Stage 2A** | **Data Architecture & Dataset Readiness** | **Completed** | Canonical observation schema, source registry, safe loader, validator, preprocessor, synthetic fixtures. |
 | **Stage 2B** | **Study Geography & Real Dataset Ingestion** | **Completed** | Tamil Nadu pilot (32 districts), 4 genuine datasets acquired, 448 canonical observations, CLI pipeline, coverage report. |
-| **Stage 3** | **Exploratory Regional Data Analysis** | Scheduled | Summary stats, disparity indices, correlation matrices, Plotly charts. |
+| **Stage 3** | **Exploratory Regional Data Analysis** | **Completed** | Reusable EDA pipeline, 14-indicator summary statistics, regional rankings, correlation matrices, Plotly charts, markdown & JSON reports, 156 passed tests. |
 | **Stage 4** | **Regional Opportunity Scoring & Ranking** | Scheduled | Multi-dimensional index, weight calibration, choropleth maps, factor breakdown. |
 | **Stage 5** | **Bottleneck & Deficit Detection** | Scheduled | Benchmark gap analytics, critical constraint ranking, diagnostic alerts. |
 | **Stage 6** | **Forecasting, Scenario Simulation & Reporting**| Scheduled | Time-series forecasting, what-if simulator, automated PDF/HTML reports. |
@@ -57,7 +55,7 @@ This document outlines the systematic, controlled multi-stage engineering plan f
      - `udyam_msme_2022_23_tn.csv` (Ministry of MSME Udyam Portal)
      - `rbi_slbc_cd_ratio_2020_21_tn.csv` (RBI / SLBC Banking Statistics)
      - `tn_does_infrastructure_2020_21.csv` (TN Department of Economics & Statistics)
-  3. Decoupled adapter classes in `src/data/adapters/`: `CensusTNAdapter`, `UdyamTNAdapter`, `BankingTNAdapter`, `InfrastructureTNAdapter`.
+3. Decoupled adapter classes in `src/data/adapters/`: `CensusTNAdapter`, `UdyamTNAdapter`, `BankingTNAdapter`, `InfrastructureTNAdapter`.
   4. Secure network fetcher with strict SSL verification in `src/data/acquisition/fetcher.py`.
   5. 448 validated canonical long-form observations in `data/processed/canonical_observations_tn.csv`.
   6. Machine-readable inventory (`data_inventory.json`) and coverage report (`data_coverage_report.md`).
@@ -66,16 +64,24 @@ This document outlines the systematic, controlled multi-stage engineering plan f
 
 ---
 
-### Stage 3: Exploratory Data Analysis & Spatial Disparity Profiling (Scheduled)
-* **Goal:** Enable interactive exploration of regional indicators, statistical distributions, and spatial patterns without asserting unvalidated causal claims.
-* **Key Tasks:**
-  1. Implement univariate and multivariate analysis in `src/analytics/exploratory_analysis.py`.
-  2. Build interactive Plotly distribution charts, scatter plots, and correlation heatmaps.
-  3. Integrate basic geographic visualizations using GeoPandas and Plotly Choropleth.
-  4. Display explicit analytical transparency disclaimers regarding correlation vs. causation.
-* **Acceptance Criteria:**
-  - Users can filter and compare indicators across selected districts.
-  - Statistical summaries accurately compute mean, median, IQR, and regional disparities.
+### Stage 3: Exploratory Regional Data Analysis & Disparity Profiling (Completed)
+* **Goal:** Enable rigorous, reproducible exploratory data analysis of the validated Tamil Nadu canonical observations, generate analytical outputs, and establish dashboard visual specifications without asserting unvalidated causal claims.
+* **Key Deliverables:**
+  1. Reusable, modular analytics engine in `src/analytics/exploratory_analysis.py`:
+     - `compute_dataset_overview`, `compute_data_quality`, `compute_indicator_statistics`, `compute_regional_rankings`, `compute_regional_comparisons`, `compute_time_series_availability`, `compute_indicator_correlations`, `filter_observations`.
+  2. Publication-grade dark-themed chart builders in `src/analytics/eda_charts.py`:
+     - Regional comparison horizontal bar charts, box plots, histograms, bivariate scatter plots, correlation heatmaps, and missingness visualizations.
+  3. Reproducible reporting pipeline in `src/analytics/eda_report.py` and CLI orchestrator `scripts/run_eda.py`:
+     - Machine-readable summary: `data/processed/eda_summary.json`.
+     - Cross-sectional regional wide table: `data/processed/regional_summary_tn.csv` (32 districts × 14 indicators).
+     - Analytical diagnostic report: `docs/EDA_REPORT.md`.
+  4. Comprehensive Dashboard Visual & UX Design Specification: `docs/DASHBOARD_SPEC.md`.
+  5. Architectural Decision Record: ADR 012 in `docs/DECISIONS.md`.
+  6. Automated test suite expanded to **156 tests** (62 new tests in `tests/test_eda.py` and `tests/test_imports.py`) with 100% pass rate.
+* **Acceptance Criteria Verified:**
+  - Zero missing values, zero infinite values, and zero duplicate keys across 448 verified observations.
+  - Transparent non-causal disclosures accompanying all bivariate correlations.
+  - Zero synthetic observations presented as real data.
 
 ---
 

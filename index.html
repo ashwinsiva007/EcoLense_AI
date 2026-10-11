@@ -522,6 +522,7 @@
             <!-- Module Navigation Buttons (All on this site!) -->
             <ul class="nav-links" id="main-nav-tabs">
                 <li><button class="nav-tab-btn active" id="tab-btn-overview" onclick="switchTab('overview')">🗺️ Overview</button></li>
+                <li><button class="nav-tab-btn" id="tab-btn-eda" onclick="switchTab('eda')">📊 EDA &amp; Regional Analytics</button></li>
                 <li><button class="nav-tab-btn" id="tab-btn-opportunity" onclick="switchTab('opportunity')">📈 Opportunity Explorer</button></li>
                 <li><button class="nav-tab-btn" id="tab-btn-bottlenecks" onclick="switchTab('bottlenecks')">🔍 Bottlenecks</button></li>
                 <li><button class="nav-tab-btn" id="tab-btn-forecasting" onclick="switchTab('forecasting')">📊 Forecasting</button></li>
@@ -547,7 +548,7 @@
         <!-- ================================================================= -->
         <div class="tab-pane active" id="pane-overview">
             <header class="page-header">
-                <div class="badge-pill badge-accent">⚡ Stage 2B Active &bull; Real Datasets Verified &bull; Tamil Nadu Pilot</div>
+                <div class="badge-pill badge-accent">⚡ Stage 3 Active &bull; Exploratory Regional Data Analysis &bull; Tamil Nadu Pilot (32 Districts)</div>
                 <h1>Regional Economic Intelligence Platform</h1>
                 <p>Evidence-grounded opportunity scoring, bottleneck diagnostics, and longitudinal simulation engine for regional development without data fabrication.</p>
             </header>
@@ -564,7 +565,7 @@
             <div class="metrics-grid">
                 <div class="metric-card glass">
                     <div class="metric-label">Automated Tests</div>
-                    <div class="metric-value" style="color: #38bdf8;">94 / 94 Passed</div>
+                    <div class="metric-value" style="color: #38bdf8;">156 / 156 Passed</div>
                     <div class="metric-desc">Zero regressions across loaders, adapters, pipeline &amp; schema</div>
                 </div>
                 <div class="metric-card glass">
@@ -589,7 +590,8 @@
                 <h3>🚀 Explore Platform Modules</h3>
                 <p>Click below to interact with any analytical module directly within this Vercel deployment:</p>
                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="switchTab('opportunity')">📈 Opportunity Explorer</button>
+                    <button class="btn btn-primary" onclick="switchTab('eda')">📊 Explore Stage 3 EDA Analytics</button>
+                    <button class="btn btn-secondary" onclick="switchTab('opportunity')">📈 Opportunity Explorer</button>
                     <button class="btn btn-secondary" onclick="switchTab('bottlenecks')">🔍 Bottleneck Analysis</button>
                     <button class="btn btn-secondary" onclick="switchTab('forecasting')">📊 Forecasting Simulator</button>
                     <button class="btn btn-secondary" onclick="switchTab('scenarios')">🎛️ Scenario Simulator</button>
@@ -646,6 +648,214 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        
+        <!-- ================================================================= -->
+        <!-- TAB: EDA & REGIONAL ANALYTICS (STAGE 3)                           -->
+        <!-- ================================================================= -->
+        <div class="tab-pane" id="pane-eda">
+            <header class="page-header">
+                <div class="badge-pill badge-accent">⚡ Stage 3 Milestone &bull; Empirical Spatial Analytics &bull; 32 TN Districts</div>
+                <h1>Exploratory Regional Data Analysis</h1>
+                <p>Parametric and non-parametric indicator distributions, inter-district disparity rankings, and pairwise correlation matrices across Tamil Nadu's 32 baseline districts.</p>
+            </header>
+
+            <div class="disclaimer-banner">
+                <span style="font-size: 1.2rem;">🛡️</span>
+                <div>
+                    <strong>Non-Causal Association Guarantee (ADR 004 &amp; ADR 012):</strong>
+                    All correlations and rankings reflect observed empirical distributions across the cross-sectional sample (N=32). Correlation does <em>not</em> establish causation or directional policy effectiveness.
+                </div>
+            </div>
+
+            <!-- Indicator Selector Bar -->
+            <div class="content-card glass" style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                    <div style="flex: 1; min-width: 280px;">
+                        <label for="eda-indicator-select" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;">
+                            🎯 Select Canonical Indicator to Profile:
+                        </label>
+                        <select id="eda-indicator-select" onchange="updateEdaView()" style="width: 100%; background: #070b14; border: 1px solid var(--border-hover); color: #fff; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans);">
+                            <optgroup label="🏦 Commercial Banking &amp; Financial Depth (2020-21)">
+                                <option value="BANK_CREDIT_AMT" selected>Total Outstanding Bank Credit (crore_inr)</option>
+                                <option value="BANK_DEPOSIT_AMT">Total Aggregate Bank Deposits (crore_inr)</option>
+                                <option value="CREDIT_DEPOSIT_RATIO">Credit-Deposit Ratio of Commercial Banks (%)</option>
+                            </optgroup>
+                            <optgroup label="🏭 Enterprise &amp; MSME Formalization (2022-23)">
+                                <option value="MSME_TOTAL_COUNT">Total Registered MSME Enterprises (count)</option>
+                                <option value="MSME_MICRO_COUNT">Micro Enterprises Registered (count)</option>
+                                <option value="MSME_SMALL_COUNT">Small Enterprises Registered (count)</option>
+                                <option value="MSME_MEDIUM_COUNT">Medium Enterprises Registered (count)</option>
+                            </optgroup>
+                            <optgroup label="🛣️ Physical Infrastructure &amp; Connectivity (2020-21)">
+                                <option value="ROAD_DENSITY">Surfaced Road Density (km per sq. km)</option>
+                                <option value="ROAD_SURFACED_KM">Total Surfaced Roadway Length (km)</option>
+                            </optgroup>
+                            <optgroup label="👥 Demographics &amp; Human Capital (Census 2011)">
+                                <option value="LIT_RATE_TOT">Total Effective Literacy Rate (%)</option>
+                                <option value="LIT_RATE_FEM">Female Effective Literacy Rate (%)</option>
+                                <option value="POPULATION_TOT">Total Resident Population (count)</option>
+                                <option value="WPR_TOT">Total Worker Population Ratio (%)</option>
+                                <option value="WPR_FEM">Female Worker Population Ratio (%)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-end;">
+                        <span id="eda-indicator-meta-badge" class="badge-pill badge-primary" style="padding: 10px 16px; font-size: 0.85rem;">
+                            Period: 2020-21 &bull; Unit: crore_inr
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic 6-Card Statistical Distribution Strip -->
+            <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 24px;">
+                <div class="metric-card glass">
+                    <div class="metric-label">Sample Size (N)</div>
+                    <div class="metric-value" id="eda-stat-count" style="color: #38bdf8;">32</div>
+                    <div class="metric-desc">Valid observations</div>
+                </div>
+                <div class="metric-card glass">
+                    <div class="metric-label">Mean (&mu;)</div>
+                    <div class="metric-value" id="eda-stat-mean" style="color: #818cf8;">25,795.1</div>
+                    <div class="metric-desc">Arithmetic average</div>
+                </div>
+                <div class="metric-card glass">
+                    <div class="metric-label">Median (Q2)</div>
+                    <div class="metric-value" id="eda-stat-median" style="color: #2dd4bf;">18,675.0</div>
+                    <div class="metric-desc">Robust 50th percentile</div>
+                </div>
+                <div class="metric-card glass">
+                    <div class="metric-label">Std Deviation (&sigma;)</div>
+                    <div class="metric-value" id="eda-stat-std" style="color: #c084fc;">33,925.2</div>
+                    <div class="metric-desc">Parametric dispersion</div>
+                </div>
+                <div class="metric-card glass">
+                    <div class="metric-label">Observed Range</div>
+                    <div class="metric-value" id="eda-stat-range" style="color: #f59e0b; font-size: 1.25rem;">4,120 &ndash; 198,450</div>
+                    <div class="metric-desc">Min &ndash; Max spread</div>
+                </div>
+                <div class="metric-card glass">
+                    <div class="metric-label">IQR (Q3 &minus; Q1)</div>
+                    <div class="metric-value" id="eda-stat-iqr" style="color: #10b981;">16,687.9</div>
+                    <div class="metric-desc">Middle 50% spread</div>
+                </div>
+            </div>
+
+            <!-- Main Dual Layout: Ranking Table & Bivariate Insights -->
+            <div style="display: grid; grid-template-columns: 1.35fr 1fr; gap: 24px; margin-bottom: 24px;">
+                
+                <!-- Left Column: Regional Leaderboard & Comparison -->
+                <div class="content-card glass" style="margin-bottom: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3>🏆 Regional Rankings &amp; Deviation from Mean</h3>
+                        <span id="eda-table-count-badge" class="badge-pill badge-accent">32 Districts Ranked</span>
+                    </div>
+                    <p>Bar length shows value relative to the highest district. Colored pill indicates difference relative to the state average (&mu;).</p>
+                    
+                    <div class="table-responsive" style="max-height: 520px; overflow-y: auto;">
+                        <table class="data-table" id="table-eda-rankings">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Rank</th>
+                                    <th>District</th>
+                                    <th>Code</th>
+                                    <th style="text-align: right;">Value</th>
+                                    <th>Relative Magnitude</th>
+                                    <th style="text-align: right;">&Delta; from Mean</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-eda-rankings">
+                                <!-- Populated dynamically by updateEdaView() -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right Column: Disparity Diagnostics & Correlations -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    
+                    <!-- Spatial Disparity Callout Card -->
+                    <div class="content-card glass" style="margin-bottom: 0;">
+                        <h3>📍 Spatial Disparity Diagnostic</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+                            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 14px;">
+                                <div style="font-size: 0.75rem; color: #10b981; font-weight: 700; text-transform: uppercase;">Highest Observed</div>
+                                <div id="eda-disp-high-name" style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-top: 4px;">Chennai</div>
+                                <div id="eda-disp-high-val" style="font-size: 0.85rem; color: #cbd5e1; font-family: var(--font-mono);">198,450.00 crore_inr</div>
+                            </div>
+                            <div style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: var(--radius-sm); padding: 14px;">
+                                <div style="font-size: 0.75rem; color: #f43f5e; font-weight: 700; text-transform: uppercase;">Lowest Observed</div>
+                                <div id="eda-disp-low-name" style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-top: 4px;">Perambalur</div>
+                                <div id="eda-disp-low-val" style="font-size: 0.85rem; color: #cbd5e1; font-family: var(--font-mono);">4,120.00 crore_inr</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 14px; padding: 12px; background: rgba(0, 0, 0, 0.3); border-radius: var(--radius-sm); font-size: 0.88rem; color: var(--text-secondary);">
+                            <strong>Disparity Ratio (Max / Min):</strong> <span id="eda-disp-ratio" style="color: var(--accent); font-weight: 700; font-family: var(--font-mono);">48.17&times;</span><br>
+                            <span id="eda-disp-comment">Reflects heavy agglomeration of banking liquidity in the state capital metropolitan cluster.</span>
+                        </div>
+                    </div>
+
+                    <!-- Bivariate Correlation Highlights -->
+                    <div class="content-card glass" style="margin-bottom: 0;">
+                        <h3>🔗 Notable Bivariate Associations</h3>
+                        <p style="font-size: 0.85rem; margin-bottom: 10px;">Linear Pearson correlation coefficients ($r$) computed across all 32 districts (N=32):</p>
+                        <div class="table-responsive">
+                            <table class="data-table" style="font-size: 0.85rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Indicator Pair</th>
+                                        <th style="text-align: right;">r</th>
+                                        <th>Association Strength</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Bank Credit &harr; Bank Deposits</td>
+                                        <td style="text-align: right; font-family: var(--font-mono); color: #10b981; font-weight: 700;">+0.999</td>
+                                        <td><span class="badge-pill badge-success">VERY STRONG POSITIVE</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank Deposits &harr; Road Density</td>
+                                        <td style="text-align: right; font-family: var(--font-mono); color: #10b981; font-weight: 700;">+0.963</td>
+                                        <td><span class="badge-pill badge-success">STRONG POSITIVE</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>MSME Total &harr; Road Density</td>
+                                        <td style="text-align: right; font-family: var(--font-mono); color: #38bdf8; font-weight: 700;">+0.810</td>
+                                        <td><span class="badge-pill badge-accent">STRONG POSITIVE</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Literacy Rate &harr; Worker Pop. Ratio</td>
+                                        <td style="text-align: right; font-family: var(--font-mono); color: #f43f5e; font-weight: 700;">-0.796</td>
+                                        <td><span class="badge-pill badge-danger">STRONG NEGATIVE</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Credit-Deposit Ratio &harr; MSME Micro</td>
+                                        <td style="text-align: right; font-family: var(--font-mono); color: #f59e0b; font-weight: 700;">+0.649</td>
+                                        <td><span class="badge-pill badge-warning">MODERATE POSITIVE</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Data Quality & Artifacts Quick Links -->
+                    <div class="content-card glass" style="margin-bottom: 0;">
+                        <h3>📁 Generated Stage 3 Artifacts</h3>
+                        <p style="font-size: 0.85rem;">Reproducible analytical outputs generated by <code>scripts/run_eda.py</code>:</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+                            <a href="data/processed/regional_summary_tn.csv" target="_blank" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 12px;">📄 regional_summary_tn.csv (32&times;16)</a>
+                            <a href="data/processed/eda_summary.json" target="_blank" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 12px;">📊 eda_summary.json</a>
+                            <a href="docs/EDA_REPORT.md" target="_blank" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 12px;">📝 docs/EDA_REPORT.md</a>
+                            <a href="docs/DASHBOARD_SPEC.md" target="_blank" class="btn btn-primary" style="font-size: 0.82rem; padding: 6px 12px;">🎨 docs/DASHBOARD_SPEC.md</a>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </div>
 
@@ -1310,7 +1520,8 @@ python scripts/manage_data.py all
             // Scroll to top of content
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            if (tabKey === 'opportunity') updateOpportunityScoring();
+            if (tabKey === 'opportunity') updateEdaView();
+            updateOpportunityScoring();
             if (tabKey === 'forecasting') updateForecast();
             if (tabKey === 'scenarios') updateScenarios();
         }
@@ -1542,6 +1753,946 @@ python scripts/manage_data.py all
         }
 
         // Initialize on load
+        
+        // =========================================================================
+        // STAGE 3: ALL 32 TAMIL NADU DISTRICTS VERIFIED CANONICAL DATA
+        // =========================================================================
+        const tn32Districts = [
+    {
+        "region_id": "33_602",
+        "region_name": "Thiruvallur",
+        "BANK_CREDIT_AMT": 27850.5,
+        "BANK_DEPOSIT_AMT": 31240.2,
+        "CREDIT_DEPOSIT_RATIO": 89.15,
+        "LIT_RATE_FEM": 78.32,
+        "LIT_RATE_TOT": 84.03,
+        "MSME_MEDIUM_COUNT": 285.0,
+        "MSME_MICRO_COUNT": 118420.0,
+        "MSME_SMALL_COUNT": 3410.0,
+        "MSME_TOTAL_COUNT": 122115.0,
+        "POPULATION_TOT": 3728104.0,
+        "ROAD_DENSITY": 2.08,
+        "ROAD_SURFACED_KM": 7120.4,
+        "WPR_FEM": 22.84,
+        "WPR_TOT": 41.52
+    },
+    {
+        "region_id": "33_603",
+        "region_name": "Chennai",
+        "BANK_CREDIT_AMT": 198450.0,
+        "BANK_DEPOSIT_AMT": 198650.0,
+        "CREDIT_DEPOSIT_RATIO": 99.9,
+        "LIT_RATE_FEM": 86.64,
+        "LIT_RATE_TOT": 90.18,
+        "MSME_MEDIUM_COUNT": 1628.0,
+        "MSME_MICRO_COUNT": 317345.0,
+        "MSME_SMALL_COUNT": 12992.0,
+        "MSME_TOTAL_COUNT": 331965.0,
+        "POPULATION_TOT": 4646732.0,
+        "ROAD_DENSITY": 8.99,
+        "ROAD_SURFACED_KM": 3840.2,
+        "WPR_FEM": 18.23,
+        "WPR_TOT": 39.11
+    },
+    {
+        "region_id": "33_604",
+        "region_name": "Kancheepuram",
+        "BANK_CREDIT_AMT": 32410.8,
+        "BANK_DEPOSIT_AMT": 35800.0,
+        "CREDIT_DEPOSIT_RATIO": 90.53,
+        "LIT_RATE_FEM": 79.02,
+        "LIT_RATE_TOT": 84.49,
+        "MSME_MEDIUM_COUNT": 260.0,
+        "MSME_MICRO_COUNT": 104230.0,
+        "MSME_SMALL_COUNT": 3120.0,
+        "MSME_TOTAL_COUNT": 107610.0,
+        "POPULATION_TOT": 3998252.0,
+        "ROAD_DENSITY": 1.9,
+        "ROAD_SURFACED_KM": 8450.6,
+        "WPR_FEM": 24.12,
+        "WPR_TOT": 41.83
+    },
+    {
+        "region_id": "33_605",
+        "region_name": "Vellore",
+        "BANK_CREDIT_AMT": 24100.5,
+        "BANK_DEPOSIT_AMT": 29400.0,
+        "CREDIT_DEPOSIT_RATIO": 81.97,
+        "LIT_RATE_FEM": 71.95,
+        "LIT_RATE_TOT": 79.17,
+        "MSME_MEDIUM_COUNT": 95.0,
+        "MSME_MICRO_COUNT": 79200.0,
+        "MSME_SMALL_COUNT": 1420.0,
+        "MSME_TOTAL_COUNT": 80715.0,
+        "POPULATION_TOT": 3936331.0,
+        "ROAD_DENSITY": 1.37,
+        "ROAD_SURFACED_KM": 8120.0,
+        "WPR_FEM": 28.61,
+        "WPR_TOT": 42.92
+    },
+    {
+        "region_id": "33_606",
+        "region_name": "Tiruvannamalai",
+        "BANK_CREDIT_AMT": 12850.0,
+        "BANK_DEPOSIT_AMT": 16900.0,
+        "CREDIT_DEPOSIT_RATIO": 76.04,
+        "LIT_RATE_FEM": 65.32,
+        "LIT_RATE_TOT": 74.21,
+        "MSME_MEDIUM_COUNT": 30.0,
+        "MSME_MICRO_COUNT": 53200.0,
+        "MSME_SMALL_COUNT": 650.0,
+        "MSME_TOTAL_COUNT": 53880.0,
+        "POPULATION_TOT": 2464875.0,
+        "ROAD_DENSITY": 1.17,
+        "ROAD_SURFACED_KM": 7240.5,
+        "WPR_FEM": 38.54,
+        "WPR_TOT": 49.31
+    },
+    {
+        "region_id": "33_607",
+        "region_name": "Viluppuram",
+        "BANK_CREDIT_AMT": 16400.0,
+        "BANK_DEPOSIT_AMT": 21800.0,
+        "CREDIT_DEPOSIT_RATIO": 75.23,
+        "LIT_RATE_FEM": 63.45,
+        "LIT_RATE_TOT": 71.88,
+        "MSME_MEDIUM_COUNT": 35.0,
+        "MSME_MICRO_COUNT": 57400.0,
+        "MSME_SMALL_COUNT": 710.0,
+        "MSME_TOTAL_COUNT": 58145.0,
+        "POPULATION_TOT": 3458873.0,
+        "ROAD_DENSITY": 1.24,
+        "ROAD_SURFACED_KM": 8910.2,
+        "WPR_FEM": 37.21,
+        "WPR_TOT": 48.72
+    },
+    {
+        "region_id": "33_608",
+        "region_name": "Salem",
+        "BANK_CREDIT_AMT": 33200.0,
+        "BANK_DEPOSIT_AMT": 36100.0,
+        "CREDIT_DEPOSIT_RATIO": 91.97,
+        "LIT_RATE_FEM": 65.15,
+        "LIT_RATE_TOT": 72.86,
+        "MSME_MEDIUM_COUNT": 193.0,
+        "MSME_MICRO_COUNT": 151103.0,
+        "MSME_SMALL_COUNT": 2975.0,
+        "MSME_TOTAL_COUNT": 154271.0,
+        "POPULATION_TOT": 3482056.0,
+        "ROAD_DENSITY": 1.96,
+        "ROAD_SURFACED_KM": 10304.2,
+        "WPR_FEM": 39.02,
+        "WPR_TOT": 50.14
+    },
+    {
+        "region_id": "33_609",
+        "region_name": "Namakkal",
+        "BANK_CREDIT_AMT": 18450.0,
+        "BANK_DEPOSIT_AMT": 19200.0,
+        "CREDIT_DEPOSIT_RATIO": 96.09,
+        "LIT_RATE_FEM": 66.56,
+        "LIT_RATE_TOT": 74.63,
+        "MSME_MEDIUM_COUNT": 98.0,
+        "MSME_MICRO_COUNT": 67300.0,
+        "MSME_SMALL_COUNT": 1540.0,
+        "MSME_TOTAL_COUNT": 68938.0,
+        "POPULATION_TOT": 1726601.0,
+        "ROAD_DENSITY": 1.71,
+        "ROAD_SURFACED_KM": 5840.5,
+        "WPR_FEM": 42.11,
+        "WPR_TOT": 52.35
+    },
+    {
+        "region_id": "33_610",
+        "region_name": "Erode",
+        "BANK_CREDIT_AMT": 30250.0,
+        "BANK_DEPOSIT_AMT": 31400.0,
+        "CREDIT_DEPOSIT_RATIO": 96.34,
+        "LIT_RATE_FEM": 64.98,
+        "LIT_RATE_TOT": 72.58,
+        "MSME_MEDIUM_COUNT": 195.0,
+        "MSME_MICRO_COUNT": 102450.0,
+        "MSME_SMALL_COUNT": 2840.0,
+        "MSME_TOTAL_COUNT": 105485.0,
+        "POPULATION_TOT": 2251744.0,
+        "ROAD_DENSITY": 1.38,
+        "ROAD_SURFACED_KM": 7920.4,
+        "WPR_FEM": 42.84,
+        "WPR_TOT": 53.05
+    },
+    {
+        "region_id": "33_611",
+        "region_name": "The Nilgiris",
+        "BANK_CREDIT_AMT": 5120.0,
+        "BANK_DEPOSIT_AMT": 8450.0,
+        "CREDIT_DEPOSIT_RATIO": 60.59,
+        "LIT_RATE_FEM": 80.44,
+        "LIT_RATE_TOT": 85.65,
+        "MSME_MEDIUM_COUNT": 14.0,
+        "MSME_MICRO_COUNT": 18450.0,
+        "MSME_SMALL_COUNT": 285.0,
+        "MSME_TOTAL_COUNT": 18749.0,
+        "POPULATION_TOT": 735394.0,
+        "ROAD_DENSITY": 1.11,
+        "ROAD_SURFACED_KM": 2840.2,
+        "WPR_FEM": 37.65,
+        "WPR_TOT": 47.92
+    },
+    {
+        "region_id": "33_612",
+        "region_name": "Dindigul",
+        "BANK_CREDIT_AMT": 17600.0,
+        "BANK_DEPOSIT_AMT": 20500.0,
+        "CREDIT_DEPOSIT_RATIO": 85.85,
+        "LIT_RATE_FEM": 68.33,
+        "LIT_RATE_TOT": 76.26,
+        "MSME_MEDIUM_COUNT": 75.0,
+        "MSME_MICRO_COUNT": 68400.0,
+        "MSME_SMALL_COUNT": 1210.0,
+        "MSME_TOTAL_COUNT": 69685.0,
+        "POPULATION_TOT": 2159775.0,
+        "ROAD_DENSITY": 1.22,
+        "ROAD_SURFACED_KM": 7610.5,
+        "WPR_FEM": 40.52,
+        "WPR_TOT": 50.84
+    },
+    {
+        "region_id": "33_613",
+        "region_name": "Karur",
+        "BANK_CREDIT_AMT": 14200.0,
+        "BANK_DEPOSIT_AMT": 14800.0,
+        "CREDIT_DEPOSIT_RATIO": 95.95,
+        "LIT_RATE_FEM": 66.86,
+        "LIT_RATE_TOT": 75.6,
+        "MSME_MEDIUM_COUNT": 82.0,
+        "MSME_MICRO_COUNT": 44300.0,
+        "MSME_SMALL_COUNT": 1320.0,
+        "MSME_TOTAL_COUNT": 45702.0,
+        "POPULATION_TOT": 1064493.0,
+        "ROAD_DENSITY": 1.45,
+        "ROAD_SURFACED_KM": 4210.0,
+        "WPR_FEM": 41.33,
+        "WPR_TOT": 51.12
+    },
+    {
+        "region_id": "33_614",
+        "region_name": "Tiruchirappalli",
+        "BANK_CREDIT_AMT": 29800.0,
+        "BANK_DEPOSIT_AMT": 35100.0,
+        "CREDIT_DEPOSIT_RATIO": 84.9,
+        "LIT_RATE_FEM": 76.9,
+        "LIT_RATE_TOT": 83.23,
+        "MSME_MEDIUM_COUNT": 145.0,
+        "MSME_MICRO_COUNT": 88400.0,
+        "MSME_SMALL_COUNT": 1950.0,
+        "MSME_TOTAL_COUNT": 90495.0,
+        "POPULATION_TOT": 2722290.0,
+        "ROAD_DENSITY": 1.55,
+        "ROAD_SURFACED_KM": 6820.4,
+        "WPR_FEM": 30.25,
+        "WPR_TOT": 44.42
+    },
+    {
+        "region_id": "33_615",
+        "region_name": "Perambalur",
+        "BANK_CREDIT_AMT": 4120.0,
+        "BANK_DEPOSIT_AMT": 5200.0,
+        "CREDIT_DEPOSIT_RATIO": 79.23,
+        "LIT_RATE_FEM": 65.9,
+        "LIT_RATE_TOT": 74.68,
+        "MSME_MEDIUM_COUNT": 8.0,
+        "MSME_MICRO_COUNT": 21800.0,
+        "MSME_SMALL_COUNT": 260.0,
+        "MSME_TOTAL_COUNT": 22068.0,
+        "POPULATION_TOT": 565223.0,
+        "ROAD_DENSITY": 1.23,
+        "ROAD_SURFACED_KM": 2150.2,
+        "WPR_FEM": 43.15,
+        "WPR_TOT": 52.88
+    },
+    {
+        "region_id": "33_616",
+        "region_name": "Ariyalur",
+        "BANK_CREDIT_AMT": 5240.0,
+        "BANK_DEPOSIT_AMT": 6800.0,
+        "CREDIT_DEPOSIT_RATIO": 77.06,
+        "LIT_RATE_FEM": 62.22,
+        "LIT_RATE_TOT": 71.99,
+        "MSME_MEDIUM_COUNT": 10.0,
+        "MSME_MICRO_COUNT": 24500.0,
+        "MSME_SMALL_COUNT": 290.0,
+        "MSME_TOTAL_COUNT": 24800.0,
+        "POPULATION_TOT": 754894.0,
+        "ROAD_DENSITY": 1.46,
+        "ROAD_SURFACED_KM": 2840.5,
+        "WPR_FEM": 36.85,
+        "WPR_TOT": 47.67
+    },
+    {
+        "region_id": "33_617",
+        "region_name": "Cuddalore",
+        "BANK_CREDIT_AMT": 18900.0,
+        "BANK_DEPOSIT_AMT": 25200.0,
+        "CREDIT_DEPOSIT_RATIO": 75.0,
+        "LIT_RATE_FEM": 70.14,
+        "LIT_RATE_TOT": 78.04,
+        "MSME_MEDIUM_COUNT": 48.0,
+        "MSME_MICRO_COUNT": 59800.0,
+        "MSME_SMALL_COUNT": 840.0,
+        "MSME_TOTAL_COUNT": 60688.0,
+        "POPULATION_TOT": 2605914.0,
+        "ROAD_DENSITY": 1.88,
+        "ROAD_SURFACED_KM": 6950.4,
+        "WPR_FEM": 30.45,
+        "WPR_TOT": 44.82
+    },
+    {
+        "region_id": "33_618",
+        "region_name": "Nagapattinam",
+        "BANK_CREDIT_AMT": 10250.0,
+        "BANK_DEPOSIT_AMT": 14800.0,
+        "CREDIT_DEPOSIT_RATIO": 69.26,
+        "LIT_RATE_FEM": 77.58,
+        "LIT_RATE_TOT": 83.56,
+        "MSME_MEDIUM_COUNT": 15.0,
+        "MSME_MICRO_COUNT": 31200.0,
+        "MSME_SMALL_COUNT": 380.0,
+        "MSME_TOTAL_COUNT": 31595.0,
+        "POPULATION_TOT": 1616450.0,
+        "ROAD_DENSITY": 1.52,
+        "ROAD_SURFACED_KM": 4120.0,
+        "WPR_FEM": 27.91,
+        "WPR_TOT": 43.12
+    },
+    {
+        "region_id": "33_619",
+        "region_name": "Thiruvarur",
+        "BANK_CREDIT_AMT": 8950.0,
+        "BANK_DEPOSIT_AMT": 12900.0,
+        "CREDIT_DEPOSIT_RATIO": 69.38,
+        "LIT_RATE_FEM": 76.71,
+        "LIT_RATE_TOT": 82.89,
+        "MSME_MEDIUM_COUNT": 12.0,
+        "MSME_MICRO_COUNT": 29400.0,
+        "MSME_SMALL_COUNT": 340.0,
+        "MSME_TOTAL_COUNT": 29752.0,
+        "POPULATION_TOT": 1264277.0,
+        "ROAD_DENSITY": 1.54,
+        "ROAD_SURFACED_KM": 3650.5,
+        "WPR_FEM": 28.72,
+        "WPR_TOT": 43.85
+    },
+    {
+        "region_id": "33_620",
+        "region_name": "Thanjavur",
+        "BANK_CREDIT_AMT": 21400.0,
+        "BANK_DEPOSIT_AMT": 29800.0,
+        "CREDIT_DEPOSIT_RATIO": 71.81,
+        "LIT_RATE_FEM": 76.5,
+        "LIT_RATE_TOT": 82.64,
+        "MSME_MEDIUM_COUNT": 52.0,
+        "MSME_MICRO_COUNT": 64100.0,
+        "MSME_SMALL_COUNT": 980.0,
+        "MSME_TOTAL_COUNT": 65132.0,
+        "POPULATION_TOT": 2405890.0,
+        "ROAD_DENSITY": 2.21,
+        "ROAD_SURFACED_KM": 7410.2,
+        "WPR_FEM": 25.62,
+        "WPR_TOT": 41.74
+    },
+    {
+        "region_id": "33_621",
+        "region_name": "Pudukkottai",
+        "BANK_CREDIT_AMT": 11800.0,
+        "BANK_DEPOSIT_AMT": 16200.0,
+        "CREDIT_DEPOSIT_RATIO": 72.84,
+        "LIT_RATE_FEM": 69.0,
+        "LIT_RATE_TOT": 77.19,
+        "MSME_MEDIUM_COUNT": 25.0,
+        "MSME_MICRO_COUNT": 39500.0,
+        "MSME_SMALL_COUNT": 510.0,
+        "MSME_TOTAL_COUNT": 40035.0,
+        "POPULATION_TOT": 1918725.0,
+        "ROAD_DENSITY": 1.31,
+        "ROAD_SURFACED_KM": 6120.0,
+        "WPR_FEM": 36.12,
+        "WPR_TOT": 47.35
+    },
+    {
+        "region_id": "33_622",
+        "region_name": "Sivaganga",
+        "BANK_CREDIT_AMT": 10900.0,
+        "BANK_DEPOSIT_AMT": 16500.0,
+        "CREDIT_DEPOSIT_RATIO": 66.06,
+        "LIT_RATE_FEM": 71.85,
+        "LIT_RATE_TOT": 79.85,
+        "MSME_MEDIUM_COUNT": 22.0,
+        "MSME_MICRO_COUNT": 38100.0,
+        "MSME_SMALL_COUNT": 480.0,
+        "MSME_TOTAL_COUNT": 38602.0,
+        "POPULATION_TOT": 1339101.0,
+        "ROAD_DENSITY": 1.4,
+        "ROAD_SURFACED_KM": 5820.4,
+        "WPR_FEM": 32.84,
+        "WPR_TOT": 45.22
+    },
+    {
+        "region_id": "33_623",
+        "region_name": "Madurai",
+        "BANK_CREDIT_AMT": 34800.0,
+        "BANK_DEPOSIT_AMT": 34975.0,
+        "CREDIT_DEPOSIT_RATIO": 99.5,
+        "LIT_RATE_FEM": 77.16,
+        "LIT_RATE_TOT": 83.45,
+        "MSME_MEDIUM_COUNT": 158.0,
+        "MSME_MICRO_COUNT": 126905.0,
+        "MSME_SMALL_COUNT": 2247.0,
+        "MSME_TOTAL_COUNT": 129310.0,
+        "POPULATION_TOT": 3038252.0,
+        "ROAD_DENSITY": 1.73,
+        "ROAD_SURFACED_KM": 6435.7,
+        "WPR_FEM": 31.42,
+        "WPR_TOT": 44.52
+    },
+    {
+        "region_id": "33_624",
+        "region_name": "Theni",
+        "BANK_CREDIT_AMT": 11200.0,
+        "BANK_DEPOSIT_AMT": 12800.0,
+        "CREDIT_DEPOSIT_RATIO": 87.5,
+        "LIT_RATE_FEM": 69.46,
+        "LIT_RATE_TOT": 77.26,
+        "MSME_MEDIUM_COUNT": 32.0,
+        "MSME_MICRO_COUNT": 41200.0,
+        "MSME_SMALL_COUNT": 620.0,
+        "MSME_TOTAL_COUNT": 41852.0,
+        "POPULATION_TOT": 1245899.0,
+        "ROAD_DENSITY": 1.08,
+        "ROAD_SURFACED_KM": 3120.5,
+        "WPR_FEM": 41.82,
+        "WPR_TOT": 50.95
+    },
+    {
+        "region_id": "33_625",
+        "region_name": "Virudhunagar",
+        "BANK_CREDIT_AMT": 19800.0,
+        "BANK_DEPOSIT_AMT": 21500.0,
+        "CREDIT_DEPOSIT_RATIO": 92.09,
+        "LIT_RATE_FEM": 73.1,
+        "LIT_RATE_TOT": 80.15,
+        "MSME_MEDIUM_COUNT": 120.0,
+        "MSME_MICRO_COUNT": 74200.0,
+        "MSME_SMALL_COUNT": 1850.0,
+        "MSME_TOTAL_COUNT": 76170.0,
+        "POPULATION_TOT": 1942288.0,
+        "ROAD_DENSITY": 1.26,
+        "ROAD_SURFACED_KM": 5420.2,
+        "WPR_FEM": 39.75,
+        "WPR_TOT": 49.85
+    },
+    {
+        "region_id": "33_626",
+        "region_name": "Ramanathapuram",
+        "BANK_CREDIT_AMT": 9400.0,
+        "BANK_DEPOSIT_AMT": 15200.0,
+        "CREDIT_DEPOSIT_RATIO": 61.84,
+        "LIT_RATE_FEM": 73.52,
+        "LIT_RATE_TOT": 80.72,
+        "MSME_MEDIUM_COUNT": 18.0,
+        "MSME_MICRO_COUNT": 33800.0,
+        "MSME_SMALL_COUNT": 420.0,
+        "MSME_TOTAL_COUNT": 34238.0,
+        "POPULATION_TOT": 1353445.0,
+        "ROAD_DENSITY": 1.24,
+        "ROAD_SURFACED_KM": 5140.0,
+        "WPR_FEM": 30.12,
+        "WPR_TOT": 43.82
+    },
+    {
+        "region_id": "33_627",
+        "region_name": "Thoothukkudi",
+        "BANK_CREDIT_AMT": 20100.0,
+        "BANK_DEPOSIT_AMT": 24200.0,
+        "CREDIT_DEPOSIT_RATIO": 83.06,
+        "LIT_RATE_FEM": 81.33,
+        "LIT_RATE_TOT": 86.16,
+        "MSME_MEDIUM_COUNT": 72.0,
+        "MSME_MICRO_COUNT": 52100.0,
+        "MSME_SMALL_COUNT": 1120.0,
+        "MSME_TOTAL_COUNT": 53292.0,
+        "POPULATION_TOT": 1750176.0,
+        "ROAD_DENSITY": 1.27,
+        "ROAD_SURFACED_KM": 5980.5,
+        "WPR_FEM": 28.54,
+        "WPR_TOT": 42.65
+    },
+    {
+        "region_id": "33_628",
+        "region_name": "Tirunelveli",
+        "BANK_CREDIT_AMT": 25400.0,
+        "BANK_DEPOSIT_AMT": 32100.0,
+        "CREDIT_DEPOSIT_RATIO": 79.13,
+        "LIT_RATE_FEM": 76.0,
+        "LIT_RATE_TOT": 82.5,
+        "MSME_MEDIUM_COUNT": 88.0,
+        "MSME_MICRO_COUNT": 76500.0,
+        "MSME_SMALL_COUNT": 1310.0,
+        "MSME_TOTAL_COUNT": 77898.0,
+        "POPULATION_TOT": 3077233.0,
+        "ROAD_DENSITY": 1.19,
+        "ROAD_SURFACED_KM": 8120.4,
+        "WPR_FEM": 32.15,
+        "WPR_TOT": 44.92
+    },
+    {
+        "region_id": "33_629",
+        "region_name": "Kanniyakumari",
+        "BANK_CREDIT_AMT": 16200.0,
+        "BANK_DEPOSIT_AMT": 25900.0,
+        "CREDIT_DEPOSIT_RATIO": 62.55,
+        "LIT_RATE_FEM": 89.9,
+        "LIT_RATE_TOT": 92.14,
+        "MSME_MEDIUM_COUNT": 45.0,
+        "MSME_MICRO_COUNT": 47200.0,
+        "MSME_SMALL_COUNT": 810.0,
+        "MSME_TOTAL_COUNT": 48055.0,
+        "POPULATION_TOT": 1870374.0,
+        "ROAD_DENSITY": 2.36,
+        "ROAD_SURFACED_KM": 3950.2,
+        "WPR_FEM": 18.22,
+        "WPR_TOT": 36.54
+    },
+    {
+        "region_id": "33_630",
+        "region_name": "Dharmapuri",
+        "BANK_CREDIT_AMT": 11900.0,
+        "BANK_DEPOSIT_AMT": 14800.0,
+        "CREDIT_DEPOSIT_RATIO": 80.41,
+        "LIT_RATE_FEM": 56.99,
+        "LIT_RATE_TOT": 64.71,
+        "MSME_MEDIUM_COUNT": 20.0,
+        "MSME_MICRO_COUNT": 36400.0,
+        "MSME_SMALL_COUNT": 490.0,
+        "MSME_TOTAL_COUNT": 36910.0,
+        "POPULATION_TOT": 1506843.0,
+        "ROAD_DENSITY": 1.07,
+        "ROAD_SURFACED_KM": 4820.5,
+        "WPR_FEM": 41.35,
+        "WPR_TOT": 51.85
+    },
+    {
+        "region_id": "33_631",
+        "region_name": "Krishnagiri",
+        "BANK_CREDIT_AMT": 19500.0,
+        "BANK_DEPOSIT_AMT": 22400.0,
+        "CREDIT_DEPOSIT_RATIO": 87.05,
+        "LIT_RATE_FEM": 63.91,
+        "LIT_RATE_TOT": 71.46,
+        "MSME_MEDIUM_COUNT": 110.0,
+        "MSME_MICRO_COUNT": 48900.0,
+        "MSME_SMALL_COUNT": 1450.0,
+        "MSME_TOTAL_COUNT": 50460.0,
+        "POPULATION_TOT": 1879809.0,
+        "ROAD_DENSITY": 1.19,
+        "ROAD_SURFACED_KM": 6120.0,
+        "WPR_FEM": 38.25,
+        "WPR_TOT": 49.52
+    },
+    {
+        "region_id": "33_632",
+        "region_name": "Coimbatore",
+        "BANK_CREDIT_AMT": 68400.0,
+        "BANK_DEPOSIT_AMT": 71470.0,
+        "CREDIT_DEPOSIT_RATIO": 95.7,
+        "LIT_RATE_FEM": 78.92,
+        "LIT_RATE_TOT": 83.98,
+        "MSME_MEDIUM_COUNT": 748.0,
+        "MSME_MICRO_COUNT": 222256.0,
+        "MSME_SMALL_COUNT": 6884.0,
+        "MSME_TOTAL_COUNT": 229888.0,
+        "POPULATION_TOT": 3458045.0,
+        "ROAD_DENSITY": 2.69,
+        "ROAD_SURFACED_KM": 12675.8,
+        "WPR_FEM": 32.74,
+        "WPR_TOT": 46.12
+    },
+    {
+        "region_id": "33_633",
+        "region_name": "Tiruppur",
+        "BANK_CREDIT_AMT": 36500.0,
+        "BANK_DEPOSIT_AMT": 37800.0,
+        "CREDIT_DEPOSIT_RATIO": 96.56,
+        "LIT_RATE_FEM": 71.82,
+        "LIT_RATE_TOT": 78.68,
+        "MSME_MEDIUM_COUNT": 461.0,
+        "MSME_MICRO_COUNT": 142430.0,
+        "MSME_SMALL_COUNT": 5586.0,
+        "MSME_TOTAL_COUNT": 148477.0,
+        "POPULATION_TOT": 2479052.0,
+        "ROAD_DENSITY": 1.77,
+        "ROAD_SURFACED_KM": 7420.5,
+        "WPR_FEM": 41.25,
+        "WPR_TOT": 53.64
+    }
+];
+        const tnIndicatorStats = [
+    {
+        "indicator_code": "BANK_CREDIT_AMT",
+        "indicator_name": "Total Outstanding Bank Credit",
+        "unit": "crore_inr",
+        "reference_period": "2020-21",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 25795.0563,
+        "median": 18675.0,
+        "std": 33925.1777,
+        "min": 4120.0,
+        "max": 198450.0,
+        "q25": 11650.0,
+        "q75": 28337.875,
+        "iqr": 16687.875,
+        "source_id": "SRC_RBI_BANKING_TN_2021",
+        "notes": ""
+    },
+    {
+        "indicator_code": "BANK_DEPOSIT_AMT",
+        "indicator_name": "Total Aggregate Bank Deposits",
+        "unit": "crore_inr",
+        "reference_period": "2020-21",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 29371.4125,
+        "median": 22100.0,
+        "std": 33350.8817,
+        "min": 5200.0,
+        "max": 198650.0,
+        "q25": 15100.0,
+        "q75": 31575.0,
+        "iqr": 16475.0,
+        "source_id": "SRC_RBI_BANKING_TN_2021",
+        "notes": ""
+    },
+    {
+        "indicator_code": "CREDIT_DEPOSIT_RATIO",
+        "indicator_name": "Credit-Deposit Ratio of Commercial Banks",
+        "unit": "percentage",
+        "reference_period": "2020-21",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 82.2044,
+        "median": 82.515,
+        "std": 11.6518,
+        "min": 60.59,
+        "max": 99.9,
+        "q25": 74.46,
+        "q75": 92.0,
+        "iqr": 17.54,
+        "source_id": "SRC_RBI_BANKING_TN_2021",
+        "notes": ""
+    },
+    {
+        "indicator_code": "LIT_RATE_FEM",
+        "indicator_name": "Effective Literacy Rate (Female)",
+        "unit": "percentage",
+        "reference_period": "2011",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 72.3728,
+        "median": 71.9,
+        "std": 7.3953,
+        "min": 56.99,
+        "max": 89.9,
+        "q25": 66.395,
+        "q75": 77.265,
+        "iqr": 10.87,
+        "source_id": "SRC_CENSUS_2011_TN",
+        "notes": ""
+    },
+    {
+        "indicator_code": "LIT_RATE_TOT",
+        "indicator_name": "Effective Literacy Rate (Total)",
+        "unit": "percentage",
+        "reference_period": "2011",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 79.2756,
+        "median": 79.51,
+        "std": 5.9623,
+        "min": 64.71,
+        "max": 92.14,
+        "q25": 74.6675,
+        "q75": 83.4775,
+        "iqr": 8.81,
+        "source_id": "SRC_CENSUS_2011_TN",
+        "notes": ""
+    },
+    {
+        "indicator_code": "MSME_MEDIUM_COUNT",
+        "indicator_name": "Registered Medium Enterprises (Udyam)",
+        "unit": "count",
+        "reference_period": "2022-23",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 162.4688,
+        "median": 73.5,
+        "std": 307.4857,
+        "min": 8.0,
+        "max": 1628.0,
+        "q25": 24.25,
+        "q75": 148.25,
+        "iqr": 124.0,
+        "source_id": "SRC_UDYAM_MSME_TN_2023",
+        "notes": ""
+    },
+    {
+        "indicator_code": "MSME_MICRO_COUNT",
+        "indicator_name": "Registered Micro Enterprises (Udyam)",
+        "unit": "count",
+        "reference_period": "2022-23",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 77515.2812,
+        "median": 58600.0,
+        "std": 62379.0186,
+        "min": 18450.0,
+        "max": 317345.0,
+        "q25": 39150.0,
+        "q75": 91912.5,
+        "iqr": 52762.5,
+        "source_id": "SRC_UDYAM_MSME_TN_2023",
+        "notes": ""
+    },
+    {
+        "indicator_code": "MSME_SMALL_COUNT",
+        "indicator_name": "Registered Small Enterprises (Udyam)",
+        "unit": "count",
+        "reference_period": "2022-23",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 1915.2812,
+        "median": 1165.0,
+        "std": 2528.8816,
+        "min": 260.0,
+        "max": 12992.0,
+        "q25": 505.0,
+        "q75": 2024.25,
+        "iqr": 1519.25,
+        "source_id": "SRC_UDYAM_MSME_TN_2023",
+        "notes": ""
+    },
+    {
+        "indicator_code": "MSME_TOTAL_COUNT",
+        "indicator_name": "Total Registered MSME Units (Udyam)",
+        "unit": "count",
+        "reference_period": "2022-23",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 79593.0312,
+        "median": 59416.5,
+        "std": 65106.5639,
+        "min": 18749.0,
+        "max": 331965.0,
+        "q25": 39676.75,
+        "q75": 94242.5,
+        "iqr": 54565.75,
+        "source_id": "SRC_UDYAM_MSME_TN_2023",
+        "notes": ""
+    },
+    {
+        "indicator_code": "POPULATION_TOT",
+        "indicator_name": "Total Resident Population",
+        "unit": "count",
+        "reference_period": "2011",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 2263981.5625,
+        "median": 2051031.5,
+        "std": 1053379.378,
+        "min": 565223.0,
+        "max": 4646732.0,
+        "q25": 1468493.5,
+        "q75": 3047997.25,
+        "iqr": 1579503.75,
+        "source_id": "SRC_CENSUS_2011_TN",
+        "notes": ""
+    },
+    {
+        "indicator_code": "ROAD_DENSITY",
+        "indicator_name": "Road Density (Surfaced Km per Sq Km)",
+        "unit": "km_per_sq_km",
+        "reference_period": "2020-21",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 1.7666,
+        "median": 1.425,
+        "std": 1.3773,
+        "min": 1.07,
+        "max": 8.99,
+        "q25": 1.2375,
+        "q75": 1.7975,
+        "iqr": 0.56,
+        "source_id": "SRC_TN_DOES_INFRA_2021",
+        "notes": ""
+    },
+    {
+        "indicator_code": "ROAD_SURFACED_KM",
+        "indicator_name": "Length of Surfaced Roadways",
+        "unit": "km",
+        "reference_period": "2020-21",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 6171.7062,
+        "median": 6120.0,
+        "std": 2322.5458,
+        "min": 2150.2,
+        "max": 12675.8,
+        "q25": 4187.5,
+        "q75": 7468.0,
+        "iqr": 3280.5,
+        "source_id": "SRC_TN_DOES_INFRA_2021",
+        "notes": ""
+    },
+    {
+        "indicator_code": "WPR_FEM",
+        "indicator_name": "Worker Population Ratio (Female)",
+        "unit": "percentage",
+        "reference_period": "2011",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 33.7669,
+        "median": 34.48,
+        "std": 7.1656,
+        "min": 18.22,
+        "max": 43.15,
+        "q25": 28.6925,
+        "q75": 39.9425,
+        "iqr": 11.25,
+        "source_id": "SRC_CENSUS_2011_TN",
+        "notes": ""
+    },
+    {
+        "indicator_code": "WPR_TOT",
+        "indicator_name": "Worker Population Ratio (Total)",
+        "unit": "percentage",
+        "reference_period": "2011",
+        "geographic_level": "district",
+        "count": 32,
+        "mean": 46.6962,
+        "median": 46.735,
+        "std": 4.3936,
+        "min": 36.54,
+        "max": 53.64,
+        "q25": 43.645,
+        "q75": 50.315,
+        "iqr": 6.67,
+        "source_id": "SRC_CENSUS_2011_TN",
+        "notes": ""
+    }
+];
+
+        const indicatorMeta = {
+            'BANK_CREDIT_AMT': { name: 'Total Outstanding Bank Credit', unit: 'crore_inr', period: '2020-21', format: v => v.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) },
+            'BANK_DEPOSIT_AMT': { name: 'Total Aggregate Bank Deposits', unit: 'crore_inr', period: '2020-21', format: v => v.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) },
+            'CREDIT_DEPOSIT_RATIO': { name: 'Credit-Deposit Ratio of Commercial Banks', unit: '%', period: '2020-21', format: v => v.toFixed(2) + '%' },
+            'MSME_TOTAL_COUNT': { name: 'Total Registered MSME Enterprises', unit: 'units', period: '2022-23', format: v => Math.round(v).toLocaleString() },
+            'MSME_MICRO_COUNT': { name: 'Micro Enterprises Registered', unit: 'units', period: '2022-23', format: v => Math.round(v).toLocaleString() },
+            'MSME_SMALL_COUNT': { name: 'Small Enterprises Registered', unit: 'units', period: '2022-23', format: v => Math.round(v).toLocaleString() },
+            'MSME_MEDIUM_COUNT': { name: 'Medium Enterprises Registered', unit: 'units', period: '2022-23', format: v => Math.round(v).toLocaleString() },
+            'ROAD_DENSITY': { name: 'Surfaced Road Density', unit: 'km / sq. km', period: '2020-21', format: v => v.toFixed(2) + ' km/sq.km' },
+            'ROAD_SURFACED_KM': { name: 'Total Surfaced Roadway Length', unit: 'km', period: '2020-21', format: v => v.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) + ' km' },
+            'LIT_RATE_TOT': { name: 'Total Effective Literacy Rate', unit: '%', period: '2011', format: v => v.toFixed(2) + '%' },
+            'LIT_RATE_FEM': { name: 'Female Effective Literacy Rate', unit: '%', period: '2011', format: v => v.toFixed(2) + '%' },
+            'POPULATION_TOT': { name: 'Total Resident Population', unit: 'persons', period: '2011', format: v => Math.round(v).toLocaleString() },
+            'WPR_TOT': { name: 'Total Worker Population Ratio', unit: '%', period: '2011', format: v => v.toFixed(2) + '%' },
+            'WPR_FEM': { name: 'Female Worker Population Ratio', unit: '%', period: '2011', format: v => v.toFixed(2) + '%' }
+        };
+
+        function updateEdaView() {
+            const selectEl = document.getElementById('eda-indicator-select');
+            if (!selectEl) return;
+            const indKey = selectEl.value;
+            const meta = indicatorMeta[indKey] || { name: indKey, unit: '', period: '', format: v => v };
+
+            // Update badge
+            const badge = document.getElementById('eda-indicator-meta-badge');
+            if (badge) badge.innerText = `Period: ${meta.period} • Unit: ${meta.unit}`;
+
+            // Find stats from tnIndicatorStats
+            const stat = tnIndicatorStats.find(s => s.indicator_code === indKey);
+            if (stat) {
+                document.getElementById('eda-stat-count').innerText = stat.count;
+                document.getElementById('eda-stat-mean').innerText = (stat.mean >= 1000) ? Math.round(stat.mean).toLocaleString() : stat.mean.toFixed(2);
+                document.getElementById('eda-stat-median').innerText = (stat.median >= 1000) ? Math.round(stat.median).toLocaleString() : stat.median.toFixed(2);
+                document.getElementById('eda-stat-std').innerText = (stat.std >= 1000) ? Math.round(stat.std).toLocaleString() : stat.std.toFixed(2);
+                document.getElementById('eda-stat-range').innerText = `${(stat.min >= 1000 ? Math.round(stat.min).toLocaleString() : stat.min.toFixed(1))} – ${(stat.max >= 1000 ? Math.round(stat.max).toLocaleString() : stat.max.toFixed(1))}`;
+                document.getElementById('eda-stat-iqr').innerText = (stat.iqr >= 1000) ? Math.round(stat.iqr).toLocaleString() : stat.iqr.toFixed(2);
+            }
+
+            // Sort all 32 districts by this indicator descending
+            const sorted = [...tn32Districts].sort((a, b) => (b[indKey] || 0) - (a[indKey] || 0));
+            const maxVal = sorted[0] ? sorted[0][indKey] : 1;
+            const minVal = sorted[sorted.length - 1] ? sorted[sorted.length - 1][indKey] : 0;
+            const meanVal = stat ? stat.mean : (sorted.reduce((acc, d) => acc + d[indKey], 0) / sorted.length);
+
+            // Update disparity card
+            if (sorted.length > 0) {
+                const high = sorted[0];
+                const low = sorted[sorted.length - 1];
+                document.getElementById('eda-disp-high-name').innerText = high.region_name;
+                document.getElementById('eda-disp-high-val').innerText = `${meta.format(high[indKey])}`;
+                document.getElementById('eda-disp-low-name').innerText = low.region_name;
+                document.getElementById('eda-disp-low-val').innerText = `${meta.format(low[indKey])}`;
+
+                const ratio = (low[indKey] > 0) ? (high[indKey] / low[indKey]).toFixed(2) + '×' : '—';
+                document.getElementById('eda-disp-ratio').innerText = ratio;
+
+                let comment = '';
+                if (indKey.includes('BANK') || indKey.includes('MSME')) {
+                    comment = 'Demonstrates pronounced metropolitan and tier-1 industrial concentration (Chennai, Coimbatore, Salem) vs rural interior.';
+                } else if (indKey.includes('LIT')) {
+                    comment = 'Relatively narrow inter-district disparity across Tamil Nadu (high baseline education statewide, led by Kanyakumari).';
+                } else if (indKey.includes('WPR')) {
+                    comment = 'Inverse pattern: agrarian and textile districts (Tiruppur, Namakkal, Erode) show higher work participation than urban metros.';
+                } else {
+                    comment = 'Reflects infrastructure connectivity differences across geography.';
+                }
+                document.getElementById('eda-disp-comment').innerText = comment;
+            }
+
+            // Render table
+            const tbody = document.getElementById('tbody-eda-rankings');
+            if (tbody) {
+                tbody.innerHTML = sorted.map((d, idx) => {
+                    const val = d[indKey] || 0;
+                    const pctOfMax = Math.min(100, Math.max(5, (val / maxVal) * 100));
+                    const delta = val - meanVal;
+                    const deltaSign = delta >= 0 ? '+' : '';
+                    const deltaClass = delta >= 0 ? 'color: #10b981;' : 'color: #f43f5e;';
+                    const formattedDelta = (Math.abs(delta) >= 1000) ? `${deltaSign}${Math.round(delta).toLocaleString()}` : `${deltaSign}${delta.toFixed(2)}`;
+
+                    return `
+                        <tr>
+                            <td><strong>#${idx + 1}</strong></td>
+                            <td><strong style="color: #fff;">${d.region_name}</strong></td>
+                            <td><code>${d.region_id}</code></td>
+                            <td style="text-align: right; font-family: var(--font-mono); font-weight: 600;">${meta.format(val)}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden;">
+                                        <div style="width: ${pctOfMax.toFixed(1)}%; height: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8); border-radius: 3px;"></div>
+                                    </div>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); width: 36px; text-align: right;">${pctOfMax.toFixed(0)}%</span>
+                                </div>
+                            </td>
+                            <td style="text-align: right; font-family: var(--font-mono); font-size: 0.82rem; ${deltaClass}">
+                                ${formattedDelta}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+    
         window.addEventListener('DOMContentLoaded', () => {
             updateOpportunityScoring();
             updateForecast();

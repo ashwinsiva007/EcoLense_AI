@@ -164,7 +164,7 @@ Open your web browser at `http://localhost:8501`.
 ```bash
 pytest -v
 ```
-All 94 unit and integration tests run completely offline with zero network dependencies.
+All **156 unit and integration tests** run completely offline with zero network dependencies.
 
 ### Reproducible Data Pipeline Commands (Stage 2B)
 EconLens AI provides a reproducible command suite to manage data acquisition, validation, standardization, and audit reporting:
@@ -189,13 +189,25 @@ python scripts/manage_data.py report
 python scripts/manage_data.py all
 ```
 
+### Reproducible Exploratory Data Analysis (Stage 3)
+Execute the complete EDA pipeline to compute descriptive statistics, regional disparity rankings, pairwise correlations, and diagnostic reports:
+
+```bash
+# Run end-to-end EDA pipeline and generate reports
+python scripts/run_eda.py
+```
+Outputs produced:
+- `data/processed/eda_summary.json` (Machine-readable statistics and data quality metrics)
+- `data/processed/regional_summary_tn.csv` (Cross-sectional wide table of 32 districts × 14 indicators)
+- `docs/EDA_REPORT.md` (Human-readable analytical diagnostic report)
+
 ---
 
 ## 8. Cloud Deployment Guide
 
 EconLens AI is deployed directly on Vercel:
 - **Live Production URL:** [https://ecolenseai.vercel.app](https://ecolenseai.vercel.app)
-- All analytical modules (Overview, Opportunity Explorer, Bottleneck Diagnostics, Forecasting, Scenarios, Data & Sources, Validation Simulator) run directly on the unified web interface with zero external redirects.
+- All analytical modules (Overview, EDA & Regional Analytics, Opportunity Explorer, Bottleneck Diagnostics, Forecasting, Scenarios, Data & Sources, Validation Simulator) run directly on the unified web interface with zero external redirects.
 
 ---
 
@@ -212,9 +224,10 @@ EconLens AI is deployed directly on Vercel:
 | **Source Adapters (`src/data/adapters/`)** | ✅ Completed | `CensusTNAdapter`, `UdyamTNAdapter`, `BankingTNAdapter`, `InfrastructureTNAdapter` |
 | **Audited Network Fetcher (`src/data/acquisition/`)** | ✅ Completed | Strict CA SSL verification, timeouts, SHA-256 provenance hashes |
 | **Data Inventory & Coverage Report (`src/data/inventory.py`)** | ✅ Completed | Generated `data_inventory.json` and `data_coverage_report.md` |
-| **Automated Test Suite (`tests/`)** | ✅ Completed | **94 passed in ~1.1s** with 100% offline isolation |
-| **Unified Web Dashboard (Vercel)** | ✅ Live | [https://ecolenseai.vercel.app](https://ecolenseai.vercel.app) with 7 fully functional modules |
-| **Exploratory Data Analysis (Stage 3)** | ⏳ Scheduled | Summary statistics, spatial disparity profiling |
+| **Exploratory Data Analysis (Stage 3)** | ✅ Completed | Univariate statistics, disparity profiles, correlation matrices, Plotly charts, markdown & JSON reports (`scripts/run_eda.py`) |
+| **Dashboard Visual & UX Specification (Stage 3)** | ✅ Completed | Comprehensive visual and UX specification in `docs/DASHBOARD_SPEC.md` |
+| **Automated Test Suite (`tests/`)** | ✅ Completed | **156 passed in ~1.5s** with 100% offline isolation |
+| **Unified Web Dashboard (Vercel)** | ✅ Live | [https://ecolenseai.vercel.app](https://ecolenseai.vercel.app) with complete interactive modules |
 | **Opportunity Scoring Algorithm (Stage 4)** | ⏳ Scheduled | Multi-criteria scoring with factor decomposition |
 | **Bottleneck Diagnostics Engine (Stage 5)** | ⏳ Scheduled | Benchmark gap detection and prioritized roadmaps |
 | **Longitudinal Forecasting & Scenarios (Stage 6)** | ⏳ Scheduled | Time-series forecasting and policy shock simulation |

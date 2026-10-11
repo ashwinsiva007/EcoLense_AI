@@ -29,6 +29,8 @@ MODULES_TO_TEST = [
     "src.data.pipeline",
     "src.analytics",
     "src.analytics.exploratory_analysis",
+    "src.analytics.eda_charts",
+    "src.analytics.eda_report",
     "src.analytics.opportunity_scoring",
     "src.intelligence",
     "src.intelligence.bottleneck_detection",
@@ -65,7 +67,19 @@ def test_core_classes_exported() -> None:
         InfrastructureTNAdapter,
         DataInventoryManager,
     )
-    from src.analytics import ExploratoryAnalyzer, OpportunityScorer
+    from src.analytics import (
+        ExploratoryAnalyzer,
+        OpportunityScorer,
+        DatasetOverview,
+        DataQualityProfile,
+        IndicatorStats,
+        RegionalComparison,
+        CorrelationResult,
+        SummaryStatistics,
+        generate_eda_summary_json,
+        generate_eda_report_markdown,
+        generate_regional_summary_table,
+    )
     from src.intelligence import BottleneckDetector, RegionalForecaster, ScenarioSimulator
     from src.utils import get_logger, setup_logging
 
@@ -86,6 +100,15 @@ def test_core_classes_exported() -> None:
     assert DataInventoryManager is not None
     assert ExploratoryAnalyzer is not None
     assert OpportunityScorer is not None
+    assert DatasetOverview is not None
+    assert DataQualityProfile is not None
+    assert IndicatorStats is not None
+    assert RegionalComparison is not None
+    assert CorrelationResult is not None
+    assert SummaryStatistics is not None
+    assert callable(generate_eda_summary_json)
+    assert callable(generate_eda_report_markdown)
+    assert callable(generate_regional_summary_table)
     assert BottleneckDetector is not None
     assert RegionalForecaster is not None
     assert ScenarioSimulator is not None
