@@ -1,0 +1,7 @@
+region_id,region_name,parent_region_id,geographic_level,indicator_code,indicator_name,value,unit,reference_period,source_id,source_record_id,collection_date,quality_status,notes
+DEMO_DIST_01,Demo District Alpha,DEMO_ST_01,district,LIT_RATE_TOT,Total Literacy Rate,78.5,percentage,2021-22,SRC_EXAMPLE_SYNTHETIC,REC_001,2026-10-11,synthetic,Synthetic test fixture record for pipeline verification
+DEMO_DIST_01,Demo District Alpha,DEMO_ST_01,district,WPR_TOT,Worker Population Ratio,42.1,percentage,2021-22,SRC_EXAMPLE_SYNTHETIC,REC_002,2026-10-11,synthetic,Synthetic test fixture record for pipeline verification
+DEMO_DIST_01,Demo District Alpha,DEMO_ST_01,district,ROAD_DENSITY,Paved Road Density,115.4,km_per_sq_km,2021-22,SRC_EXAMPLE_SYNTHETIC,REC_003,2026-10-11,synthetic,Synthetic test fixture record for pipeline verification
+DEMO_DIST_02,Demo District Beta,DEMO_ST_01,district,LIT_RATE_TOT,Total Literacy Rate,68.2,percentage,2021-22,SRC_EXAMPLE_SYNTHETIC,REC_004,2026-10-11,synthetic,Synthetic test fixture record for pipeline verification
+DEMO_DIST_02,Demo District Beta,DEMO_ST_01,district,WPR_TOT,Worker Population Ratio,38.9,percentage,2021-22,SRC_EXAMPLE_SYNTHETIC,REC_005,2026-10-11,synthetic,Synthetic test fixture record for pipeline verification
+DEMO_DIST_02,Demo District Beta,DEMO_ST_01,district,ROAD_DENSITY,Paved Road Density,92.0,km_per_sq_km,2021-22,SRC_EXAMPLE_SYNTHETIC,REC_006,2026-10-11,synthetic,Synthetic test fixture record for pipeline verification

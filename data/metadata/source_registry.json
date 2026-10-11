@@ -1,0 +1,50 @@
+{
+  "SRC_EXAMPLE_SYNTHETIC": {
+    "source_id": "SRC_EXAMPLE_SYNTHETIC",
+    "dataset_name": "Synthetic District Demonstration Fixture (Example Only)",
+    "publisher": "EconLens AI Project Test Suite",
+    "source_url": "internal://data/sample/synthetic_district_observations.csv",
+    "geographic_coverage": "Synthetic Test Geography",
+    "geographic_level": "district",
+    "reference_period": "2021-22",
+    "retrieval_date": "2026-10-11",
+    "file_path": "data/sample/synthetic_district_observations.csv",
+    "license": "Internal Test Fixture / MIT",
+    "data_format": "csv",
+    "update_frequency": "static",
+    "verification_status": "validated",
+    "notes": "EXAMPLE ONLY: This entry represents an internal deterministic synthetic test fixture for pipeline validation. It is not real economic data."
+  },
+  "SRC_PLANNED_CENSUS_2011": {
+    "source_id": "SRC_PLANNED_CENSUS_2011",
+    "dataset_name": "Census of India 2011 - Primary Census Abstract (Planned Candidate)",
+    "publisher": "Office of the Registrar General & Census Commissioner, India",
+    "source_url": "https://censusindia.gov.in",
+    "geographic_coverage": "India",
+    "geographic_level": "district",
+    "reference_period": "2011",
+    "retrieval_date": null,
+    "file_path": null,
+    "license": "Open Government Data License - India (OGDL)",
+    "data_format": "csv",
+    "update_frequency": "decennial",
+    "verification_status": "planned",
+    "notes": "Candidate source identified for demographic baseline indicators. File not yet acquired or verified."
+  },
+  "SRC_PLANNED_PLFS_2022": {
+    "source_id": "SRC_PLANNED_PLFS_2022",
+    "dataset_name": "Periodic Labour Force Survey (PLFS) Annual Report (Planned Candidate)",
+    "publisher": "National Sample Survey Office (NSSO), MoSPI",
+    "source_url": "https://mospi.gov.in",
+    "geographic_coverage": "India",
+    "geographic_level": "state",
+    "reference_period": "2021-22",
+    "retrieval_date": null,
+    "file_path": null,
+    "license": "unknown",
+    "data_format": "csv",
+    "update_frequency": "annual",
+    "verification_status": "planned",
+    "notes": "Candidate source for workforce and labor metrics. License terms and district-level availability require review."
+  }
+}

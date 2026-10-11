@@ -80,6 +80,11 @@ class Settings:
         return self.data_dir / "sample"
 
     @property
+    def metadata_data_dir(self) -> Path:
+        """Directory for source registries, manifests, and data dictionaries."""
+        return self.data_dir / "metadata"
+
+    @property
     def model_dir(self) -> Path:
         """Directory for serialized models and scalers."""
         return self.base_dir / self.model_dir_name
@@ -105,6 +110,7 @@ class Settings:
             self.raw_data_dir,
             self.processed_data_dir,
             self.sample_data_dir,
+            self.metadata_data_dir,
             self.model_dir,
             self.log_dir,
         ):

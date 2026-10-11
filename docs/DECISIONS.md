@@ -78,3 +78,55 @@ This document captures key architectural and technical decisions made during the
   Use Python's standard `pathlib.Path` across all configuration, data loading, logging, and test routines. Forbid hardcoded string path separators (`\` or `/`).
 * **Consequences:**  
   - Guarantees seamless compatibility across Windows, Linux, and macOS environments.
+
+---
+
+## ADR 006: Canonical Long-Form Observation Model for Regional Data
+
+* **Date:** 2026-10-11
+* **Status:** Accepted (Stage 2A)
+* **Context:**  
+  Regional economic datasets originate from diverse ministries, census departments, and statistical agencies with inconsistent tabular layouts (e.g. wide tables with indicators or years as column headers). A rigid wide table schema breaks whenever new indicators or survey cycles are introduced.
+* **Decision:**  
+  Standardize on a **long-form observation schema** as the universal data interchange format:
+  `[region_id, region_name, parent_region_id, geographic_level, indicator_code, indicator_name, value, unit, reference_period, source_id, source_record_id, collection_date, quality_status, notes]`.
+  The composite primary key is `(region_id, indicator_code, reference_period)`.
+* **Consequences:**  
+  - Accommodates arbitrary indicators, survey years, and geographic resolutions without schema migrations.
+  - Provides a predictable target contract for wide-to-long transformation functions.
+  - Requires pivot/unmelt steps when presenting wide comparative matrices to end users.
+
+---
+
+## ADR 007: Structured Dataset Source Registry & Provenance Lifecycle
+
+* **Date:** 2026-10-11
+* **Status:** Accepted (Stage 2A)
+* **Context:**  
+  Academic and policy intelligence tools must provide full lineage for every published statistic. Datasets should not be assumed verified merely because an open data portal URL exists.
+* **Decision:**  
+  Maintain an explicit JSON source registry (`data/metadata/source_registry.json`) with an enforceable four-stage verification lifecycle:
+  1. `planned`: Identified candidate dataset; file not yet downloaded.
+  2. `acquired`: Raw file obtained and preserved in `data/raw/`; unvalidated.
+  3. `validated`: File passed schema, bounds, duplicate, and geographic checks.
+  4. `rejected`: File failed validation checks or licensing is unsuitable.
+* **Consequences:**  
+  - Prohibits unverified data from silently entering production analytics.
+  - Captures publisher citations, licensing terms, update frequency, and coverage notes.
+
+---
+
+## ADR 008: Strict Anti-Imputation and Safe Preprocessing Policy
+
+* **Date:** 2026-10-11
+* **Status:** Accepted (Stage 2A)
+* **Context:**  
+  Standard machine-learning pipelines routinely fill missing numerical values with zero, mean, or median. In regional economic analysis, replacing a missing district's literacy rate or credit ratio with zero creates catastrophic distortions.
+* **Decision:**  
+  1. Missing economic observations are strictly preserved as explicit `NaN` values.
+  2. Automated zero-replacement of missing values is strictly forbidden.
+  3. Imputation cannot occur during general data loading or preprocessing; any future imputation must be explicitly configurable, accompanied by transparency flags (`<indicator>_is_imputed`), and disclosed to the user.
+  4. Preprocessing pipelines must be non-destructive: raw files are immutable, and cleaning summaries (`CleaningReport`) must document all transformations.
+* **Consequences:**  
+  - Preserves empirical integrity and prevents fabricated statistics.
+  - Forces downstream analytics to handle missing data explicitly and transparently.

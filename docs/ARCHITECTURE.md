@@ -19,10 +19,18 @@ The system is structured as a clean, modular monolith with explicit one-way data
 
 ```mermaid
 flowchart TD
-    subgraph Data Layer ["1. Ingestion & Validation Layer (src.data)"]
-        RawData["Raw Datasets (data/raw)"] --> Validator["DataValidator (schema & bounds)"]
-        Validator --> Preprocessing["PreprocessingPipeline (imputation & scaling)"]
-        Preprocessing --> ProcessedData["Processed Datasets (data/processed)"]
+    subgraph Metadata ["0. Provenance & Registry Layer"]
+        Registry["SourceRegistry (data/metadata/source_registry.json)"]
+    end
+
+    subgraph Data Layer ["1. Ingestion, Validation & Preprocessing Layer (src.data)"]
+        RawData["Raw Datasets (data/raw)"] --> Loader["DataLoader (load_csv / load_json)"]
+        SampleData["Synthetic Fixtures (data/sample)"] --> Loader
+        Loader --> Preprocessing["PreprocessingPipeline (clean, reshape, line-by-line lineage)"]
+        Preprocessing --> Validator["DataValidator (schema, bounds, units, dupes)"]
+        Registry -.-> Validator
+        Validator --> QualityReport["QualityReport (generate_quality_report)"]
+        Validator --> ProcessedData["Processed Datasets (data/processed)"]
     end
 
     subgraph Analytics Layer ["2. Analytics & Scoring Layer (src.analytics)"]
@@ -37,7 +45,9 @@ flowchart TD
     end
 
     subgraph Presentation Layer ["4. Presentation Layer (src.dashboard & app.py)"]
-        EDA --> UI["Streamlit Dashboard"]
+        Registry --> UI["Streamlit Dashboard"]
+        QualityReport --> UI
+        EDA --> UI
         Scorer --> UI
         Bottlenecks --> UI
         Forecaster --> UI
@@ -58,7 +68,49 @@ flowchart TD
 
 ---
 
-## 3. Module Responsibilities
+## 3. Data Architecture (Stage 2A Implementation)
+
+Stage 2A establishes the concrete data contracts, loading mechanisms, schema enforcers, and provenance tracking required by future analytical stages.
+
+### 3.1 Canonical Data Schema (`src/data/schema.py`)
+- **Long-Form Interchange Standard:** Decouples indicators from table structures.
+- **Composite Primary Key:** `(region_id, indicator_code, reference_period)`.
+- **Supported Administrative Levels:** `district`, `state`, `block`, `subdistrict`, `national`.
+- **Reference Period Standards:** Formats like `YYYY`, `YYYY-YY`, `YYYY-YYYY`, and `QX-YYYY`.
+- **Indicator-Specific Bounds:** Domain-specific physical limits (e.g., percentages bounded in $[0.0, 100.0]$).
+
+### 3.2 Dataset Source Registry (`src/data/source_registry.py`)
+- Stored as structured JSON in `data/metadata/source_registry.json`.
+- Enforces explicit verification lifecycle states: `planned`, `acquired`, `validated`, `rejected`.
+- Tracks citations, licensing conditions, geographic coverage, frequency, and update notes.
+
+### 3.3 Reusable Data Loader (`src/data/data_loader.py`)
+- Strictly read-only; guarantees original source file immutability.
+- Classifies exceptions into actionable categories: `DatasetNotFoundError`, `UnsupportedFormatError`, `EmptyDatasetError`, `MalformedDataError`.
+- Supports configurable encodings and isolates storage tiers (`raw`, `processed`, `sample`, `metadata`).
+
+### 3.4 Data Validator (`src/data/validation.py`)
+- Validates canonical long-form observations deterministically.
+- Audits required fields, missing values, non-finite / unparseable numeric values, reference period patterns, and geographic levels.
+- Detects duplicate observation keys without silent dropping.
+- Enforces unit consistency per indicator code and flags unregistered source IDs.
+- Returns comprehensive `ValidationResult` objects distinguishing fatal errors from informational warnings.
+
+### 3.5 Safe Preprocessing & Lineage (`src/data/preprocessing.py`)
+- Standardizes column headers into snake_case and trims text cell whitespace.
+- Coerces numeric fields while auditing non-numeric entries.
+- Normalizes reference periods.
+- Converts wide-form government tables into canonical long-form format (`wide_to_long_observations`).
+- **Strict Anti-Imputation Policy:** Missing values are never silently replaced with zero or imputed without an explicit, disclosed rule.
+- Generates a `CleaningReport` tracking all transformations applied.
+
+### 3.6 Data Quality & Readiness Reporting (`src/data/quality_report.py`)
+- Evaluates dataset completeness, distinct geographic entities, indicator coverage, and missingness distributions before data enters downstream analysis.
+- Generates structured dictionary and Markdown diagnostic dossiers.
+
+---
+
+## 4. Module Responsibilities Across Layers
 
 ### `config/`
 * **`settings.py`**: Centralized configuration management using immutable dataclasses and environment variable resolution. Provides cross-platform `pathlib.Path` resolutions and directory lifecycle management.
@@ -67,9 +119,12 @@ flowchart TD
 * **`logging_config.py`**: Idempotent logger setup with console and file handlers, structured formatting, and exception traceability without leaking sensitive information.
 
 ### `src.data/`
-* **`data_loader.py`**: Dataset registry, discovery across storage tiers (`raw`, `processed`, `sample`), and strict isolation of synthetic demonstration data.
-* **`validation.py`**: Schema enforcement, geographic boundary verification, indicator range checks, and structured `ValidationResult` generation.
-* **`preprocessing.py`**: Missing data imputation, geographic normalization, statistical scaling, and reproducible feature transformation.
+* **`schema.py`**: Canonical schema definitions, required/optional columns, primary key definitions, and bounds constraints.
+* **`source_registry.py`**: Dataset provenance model and verification state tracking.
+* **`data_loader.py`**: Safe dataset discovery and format-aware loading across storage tiers.
+* **`validation.py`**: Schema enforcement, primary key duplicate detection, unit consistency, and bounds verification.
+* **`preprocessing.py`**: Column standardization, text trimming, numeric coercion, wide-to-long reshaping, and lineage reporting.
+* **`quality_report.py`**: Data quality summary metrics and markdown diagnostic reporting.
 
 ### `src.analytics/`
 * **`exploratory_analysis.py`**: Univariate and multivariate summary statistics, regional disparity metrics, and correlation profiling with non-causal disclosures.
@@ -86,22 +141,11 @@ flowchart TD
 
 ---
 
-## 4. Module Boundaries & Non-Circular Import Policy
+## 5. Module Boundaries & Non-Circular Import Policy
 
 To guarantee long-term maintainability, the project strictly adheres to hierarchical dependency rules:
 1. `config` and `src.utils` are leaf foundational modules; they must never import from `src.data`, `src.analytics`, `src.intelligence`, or `src.dashboard`.
 2. `src.data` handles data normalization and validation; it does not depend on analytics or UI modules.
 3. `src.analytics` and `src.intelligence` consume processed data structures and produce analytical results; they do not import UI modules.
-4. `src.dashboard` and `app.py` consume analytics and intelligence outputs for visualization; they do not perform raw data manipulation or model training directly.
+4. `src.dashboard` and `app.py` consume analytics, intelligence, and data metadata for visualization; they do not perform raw data manipulation or model training directly.
 5. All modules use explicit, absolute package imports (e.g. `from config.settings import get_settings`).
-
----
-
-## 5. Extensibility & Future Stages
-
-New indicators, scoring dimensions, or intelligence algorithms are added by:
-1. Registering the dataset schema in `docs/DATA_DICTIONARY.md`.
-2. Implementing the validator in `src.data.validation`.
-3. Adding the transformation step in `src.data.preprocessing`.
-4. Extending the scoring/bottleneck contracts in `src.analytics` or `src.intelligence`.
-5. Exposing the visualization component in `src.dashboard`.

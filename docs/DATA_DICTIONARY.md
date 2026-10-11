@@ -1,57 +1,102 @@
-# EconLens AI — Data Dictionary & Schema Registry Template
+# EconLens AI — Data Dictionary & Canonical Schema Specification
 
-> **Notice on Current Status:**  
-> In accordance with Stage 1 engineering principles, no external regional datasets have been collected or assumed verified yet. This data dictionary serves as the official specification template and audit standard for all datasets to be integrated in **Stage 2 (Data Ingestion & Validation)**.
-
----
-
-## 1. Dataset Registration Template
-
-When integrating a new regional dataset into `data/raw/` or `data/processed/`, add an entry adhering to the following schema:
-
-```markdown
-### [Dataset Identifier / Code] - [Dataset Title]
-* **Source Organization / Portal:** (e.g., Census of India, Open Government Data Platform, Reserve Bank of India, NITI Aayog)
-* **Source URL / Access Date:** 
-* **License / Usage Terms:** (e.g., Open Government Data License, Public Domain, Creative Commons)
-* **Geographic Resolution:** (District / Sub-district / State / National)
-* **Reference Period / Frequency:** (e.g., 2021-2022 Annual, Census 2011)
-* **File Format & Path:** (e.g., CSV / Parquet at `data/raw/<filename>.csv`)
-* **Verification Status:** [Pending / Verified / Audited]
-
-| Column Name | Field Description | Data Type | Unit | Allowed Range | Missing Value Strategy | Notes & Quality Flags |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `region_id` | Unique ISO/Census region identifier | String | N/A | Alphanumeric (e.g. 'D_0101') | None allowed (Primary Key) | Standardized district code |
-| `region_name` | Official geographic region name | String | N/A | Text | None allowed | Normalized title case |
-| `state_name` | Parent state / administrative territory | String | N/A | Text | None allowed | Standardized state name |
-```
+> **Stage 2A Milestone Status:**  
+> This document specifies the official canonical long-form regional observation schema, composite primary keys, geographic hierarchy, reference period standards, and indicator bounds rules for **EconLens AI**. All ingested tabular data must be transformed into and validated against this contract before proceeding to analytics.
 
 ---
 
-## 2. Standard Indicator Categories & Planned Schemas
+## 1. Canonical Long-Form Observation Schema
 
-The following indicator taxonomy will be populated during Stage 2:
+EconLens AI adopts a **long-form observation model** as its canonical interchange format. This model decouples indicator definitions from physical table schemas, accommodating diverse reference periods, missing observations, multiple geographic resolutions, and varying reporting frequencies without structural schema drift.
 
-### Domain A: Socioeconomic & Demographics
-* Target Fields: Total Population, Urbanization Rate (%), Literacy Rate (%), Dependency Ratio, Median Household Consumption / Income.
-* Primary Validation Rules: Urbanization Rate between 0-100%, Literacy between 0-100%, Population > 0.
+### Observation Key (Composite Primary Key)
+An observation is uniquely identified by the 3-tuple:
+$$\text{Observation Key} = (\text{region\_id}, \text{indicator\_code}, \text{reference\_period})$$
 
-### Domain B: Labor, Skills & Human Capital
-* Target Fields: Worker Population Ratio (WPR), Female Labor Force Participation Rate (FLFPR), Higher Education Enrollment, Technical/Vocational Training Density.
-* Primary Validation Rules: Ratios between 0-100%, Non-negative enrollment counts.
-
-### Domain C: Infrastructure & Connectivity
-* Target Fields: Paved Road Density (km/sq km), Power Reliability Index (hours/day), Broadband/Cellular Penetration (%), Commercial Rail/Freight Access.
-* Primary Validation Rules: Percentages bounded 0-100%, Density >= 0.
-
-### Domain D: Business Dynamism, Financial Access & Industry
-* Target Fields: MSME Registration Density, Bank Credit-to-Deposit Ratio (CDR), Commercial Electricity Consumption per Capita, Industrial Cluster Presence.
-* Primary Validation Rules: Non-negative financial counts, valid financial ratios.
+Duplicate observation keys are strictly flagged during validation. Conflicting duplicate observations are never silently discarded.
 
 ---
 
-## 3. Data Integrity & Missing Value Policy
+## 2. Field Specifications
 
-1. **Explicit Null Encoding:** Missing values must be recorded as standard `NaN` or `None`. Sentinel values like `-999` or `N/A` strings must be sanitized during ingestion.
-2. **Missingness Thresholds:** Columns with greater than 35% missing values across the study geography must not be used in composite opportunity scoring without explicit warning and imputation disclosure.
-3. **No Silent Fabrication:** Imputed values must be explicitly tracked with a companion boolean indicator flag (e.g., `<column_name>_is_imputed`) to preserve analytical transparency.
+| Field Name | Type | Nullable? | Category | Description & Constraints | Example Value |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `region_id` | String | **No** | Required | Stable geographical identifier (e.g. Census 2011 code, LGD code, or ISO alpha code). Must not be empty or whitespace. | `"29_572"`, `"KA_BLR"` |
+| `region_name` | String | **No** | Required | Official human-readable region label. Title case. | `"Bengaluru Urban"` |
+| `parent_region_id` | String | Yes | Contextual | Identifier of parent administrative unit (e.g., state code for district). | `"ST_KA"`, `"29"` |
+| `geographic_level` | String | **No** | Required | Administrative level. Allowed: `district`, `state`, `block`, `subdistrict`, `national`. | `"district"` |
+| `indicator_code` | String | **No** | Required | Stable machine identifier for the indicator. Uppercase alphanumeric with underscores. | `"LIT_RATE_TOT"` |
+| `indicator_name` | String | **No** | Required | Human-readable name of the measured indicator. | `"Total Literacy Rate"` |
+| `value` | Float | Yes* | Required | Numeric observation. Kept purely numeric. Cannot contain strings or non-finite values (`inf`). Missing observations must be explicit `NaN`. | `78.5` |
+| `unit` | String | **No** | Required | Uniform unit of measurement. Must be consistent for all rows sharing an `indicator_code`. | `"percentage"`, `"km_per_sq_km"` |
+| `reference_period` | String | **No** | Required | Standardized reference period string. Must match accepted period formats. | `"2021-22"`, `"2011"` |
+| `source_id` | String | **No** | Required | Foreign key reference to the Dataset Source Registry (`data/metadata/source_registry.json`). | `"SRC_CENSUS_2011"` |
+| `source_record_id` | String | Yes | Contextual | Original source row identifier or table row index for provenance traceability. | `"REC_042"`, `"LINE_120"` |
+| `collection_date` | String | Yes | Contextual | Retrieval date formatted as ISO `YYYY-MM-DD`. | `"2026-10-11"` |
+| `quality_status` | String | Yes | Contextual | Validation classification: `raw`, `provisional`, `validated`, or `synthetic`. | `"validated"` |
+| `notes` | String | Yes | Contextual | Qualitative interpretation notes, caveats, or definition variations. | `"Computed from PCA Table A-5"` |
+
+*\*Note on Nullability of `value`: While the column itself is required, individual observation values may be null (`NaN`) when an indicator was not measured for that region in that reference period. Missing values are never silently replaced with zero.*
+
+---
+
+## 3. Reference Period Format Standards
+
+All reference periods must adhere to one of the following validated formats:
+
+| Format Pattern | Regular Expression | Description | Example |
+| :--- | :--- | :--- | :--- |
+| **Annual / Decennial** | `^\d{4}$` | Single calendar or census year | `2011`, `2021` |
+| **Short Fiscal / Survey** | `^\d{4}-\d{2}$` | Two-year fiscal or survey cycle (Standard) | `2021-22`, `2022-23` |
+| **Long Fiscal / Survey** | `^\d{4}-\d{4}$` | Full four-digit end year (auto-standardized to short) | `2021-2022` |
+| **Quarterly (Prefix)** | `^Q[1-4]-\d{4}$` | Quarterly economic accounts | `Q1-2023` |
+| **Quarterly (Suffix)** | `^\d{4}-Q[1-4]$` | Alternative quarterly reporting | `2023-Q1` |
+
+---
+
+## 4. Geographic Hierarchy & Resolution Strategy
+
+EconLens AI enforces an explicit geographic hierarchy:
+
+$$\text{National} \longrightarrow \text{State} \longrightarrow \text{District} \longrightarrow \text{Block / Subdistrict}$$
+
+### Key Rules for Geographic Consistency:
+1. **Official Codes Over Names:** Regions must be joined using `region_id` (Census/LGD code), never by string matching on `region_name` alone. Regional names frequently vary across portals (e.g. "Bangalore Urban" vs "Bengaluru Urban").
+2. **Boundary Stability Disclosures:** Administrative boundaries change over time (e.g., district bifurcations). Longitudinal joins must explicitly account for the reference year's district definitions.
+3. **No Automatic Multi-Level Aggregation:** District-level metrics must not be averaged into state-level metrics without population or area weighting.
+
+---
+
+## 5. Indicator Taxonomy & Bounds Rules
+
+Indicator bounds checks are applied specifically, not arbitrarily:
+
+| Domain | Indicator Code | Default Unit | Acceptable Range | Interpretation Caveat |
+| :--- | :--- | :--- | :--- | :--- |
+| **Demographics** | `LIT_RATE_TOT` | `percentage` | `[0.0, 100.0]` | Effective literacy rate (population aged 7+). |
+| **Demographics** | `POPULATION_TOT` | `count` | `[1.0, None)` | Total resident population. Must be positive. |
+| **Labor** | `WPR_TOT` | `percentage` | `[0.0, 100.0]` | Worker Population Ratio. |
+| **Labor** | `FLFPR_TOT` | `percentage` | `[0.0, 100.0]` | Female Labor Force Participation Rate. |
+| **Infrastructure** | `ROAD_DENSITY` | `km_per_sq_km` | `[0.0, None)` | Surfaced road length per unit geographical area. |
+| **Financial** | `CREDIT_DEPOSIT_RATIO` | `ratio` | `[0.0, None)` | Commercial bank credit to deposit ratio. Can exceed 100%. |
+
+---
+
+## 6. Dataset Source Provenance & Registry Model
+
+All data files must correspond to an entry in `data/metadata/source_registry.json`.
+
+### Source Verification Lifecycle States:
+- **`planned`**: A candidate dataset identified in research, but file has not yet been acquired.
+- **`acquired`**: A source file has been retrieved and placed in `data/raw/`, but structural validation has not yet passed.
+- **`validated`**: The dataset has passed schema checks, geographic verification, bounds audits, and unit consistency tests.
+- **`rejected`**: The dataset failed quality checks or licensing terms are incompatible.
+
+---
+
+## 7. Data Storage Directory Conventions
+
+- `data/raw/`: Immutable source files. Never modified in-place or overwritten by cleaning routines.
+- `data/processed/`: Validated, standardized canonical long-form observations ready for analytics.
+- `data/sample/`: Strictly isolated synthetic demonstration fixtures. Never mixed with real economic data.
+- `data/metadata/`: Dataset source registry (`source_registry.json`), data dictionaries, and transformation manifests.

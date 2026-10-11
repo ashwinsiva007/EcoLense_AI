@@ -11,6 +11,9 @@ MODULES_TO_TEST = [
     "src.utils",
     "src.utils.logging_config",
     "src.data",
+    "src.data.schema",
+    "src.data.source_registry",
+    "src.data.quality_report",
     "src.data.data_loader",
     "src.data.preprocessing",
     "src.data.validation",
@@ -37,7 +40,14 @@ def test_module_import_cleanly(module_name: str) -> None:
 def test_core_classes_exported() -> None:
     """Verifies that key classes and functions are properly exported."""
     from config import Settings, get_settings
-    from src.data import DataLoader, DataValidator, PreprocessingPipeline
+    from src.data import (
+        DataLoader,
+        DataValidator,
+        PreprocessingPipeline,
+        DatasetSource,
+        SourceRegistry,
+        generate_quality_report,
+    )
     from src.analytics import ExploratoryAnalyzer, OpportunityScorer
     from src.intelligence import BottleneckDetector, RegionalForecaster, ScenarioSimulator
     from src.utils import get_logger, setup_logging
@@ -47,6 +57,9 @@ def test_core_classes_exported() -> None:
     assert DataLoader is not None
     assert DataValidator is not None
     assert PreprocessingPipeline is not None
+    assert DatasetSource is not None
+    assert SourceRegistry is not None
+    assert callable(generate_quality_report)
     assert ExploratoryAnalyzer is not None
     assert OpportunityScorer is not None
     assert BottleneckDetector is not None

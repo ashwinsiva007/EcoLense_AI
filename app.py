@@ -22,6 +22,7 @@ from src.dashboard.layout import (
     render_sidebar_navigation,
 )
 from src.data.data_loader import DataLoader
+from src.data.source_registry import SourceRegistry
 from src.utils.logging_config import get_logger, setup_logging
 
 # Initialize application logging and configuration
@@ -31,7 +32,7 @@ settings = get_settings()
 
 
 def render_overview_page() -> None:
-    """Renders the central Overview page."""
+    """Renders the central Overview page with data readiness metrics."""
     render_welcome_state()
 
     st.markdown("### 🗺️ System Readiness &amp; Verification Status")
@@ -41,21 +42,55 @@ def render_overview_page() -> None:
     processed_count = len(data_loader.list_available_processed_datasets())
     sample_count = len(data_loader.list_available_sample_datasets())
 
-    col1, col2, col3 = st.columns(3)
+    registry_path = settings.metadata_data_dir / "source_registry.json"
+    registry = (
+        SourceRegistry.load_from_file(registry_path)
+        if registry_path.exists()
+        else SourceRegistry()
+    )
+    registry_summary = registry.get_status_summary()
+    total_sources = len(registry.list_sources())
+
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Verified Processed Datasets", f"{processed_count} files")
+        st.metric("Verified Processed", f"{processed_count} files")
     with col2:
-        st.metric("Raw Ingested Datasets", f"{raw_count} files")
+        st.metric("Raw Ingested", f"{raw_count} files")
     with col3:
-        st.metric("Sample / Demo Datasets", f"{sample_count} files")
+        st.metric("Sample / Demo", f"{sample_count} files")
+    with col4:
+        st.metric("Registered Sources", f"{total_sources} datasets")
 
     if not data_loader.has_verified_datasets():
         st.info(
-            "ℹ️ **No verified datasets ingested yet.**\n\n"
-            "The system is currently operating in **Stage 1 (Engineering Foundation)** mode. "
-            "To maintain strict analytical integrity, the dashboard will not display simulated or "
-            "fabricated regional metrics until actual verified datasets are integrated in Stage 2."
+            "ℹ️ **Data Architecture Ready — Stage 2A Active.**\n\n"
+            "Canonical long-form observation schemas, source provenance tracking, schema & bounds validators, "
+            "and safe preprocessing pipelines are in place. "
+            "In accordance with our strict **anti-fabrication policy (ADR 003)**, the dashboard will not display "
+            "simulated or fabricated regional economic statistics until actual verified datasets are integrated."
         )
+
+    if total_sources > 0:
+        with st.expander("📚 Dataset Source Registry &amp; Provenance Tracking", expanded=False):
+            st.markdown(
+                f"**Registry Status Breakdown:** "
+                f"Planned: `{registry_summary.get('planned', 0)}` | "
+                f"Acquired: `{registry_summary.get('acquired', 0)}` | "
+                f"Validated: `{registry_summary.get('validated', 0)}` | "
+                f"Rejected: `{registry_summary.get('rejected', 0)}`"
+            )
+            source_rows = [
+                {
+                    "Source ID": s.source_id,
+                    "Dataset Name": s.dataset_name,
+                    "Publisher": s.publisher,
+                    "Coverage": s.geographic_coverage,
+                    "Period": s.reference_period,
+                    "Status": s.verification_status.upper(),
+                }
+                for s in registry.list_sources()
+            ]
+            st.dataframe(source_rows, use_container_width=True)
 
 
 def main() -> None:
